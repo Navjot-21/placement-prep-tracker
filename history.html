@@ -42,7 +42,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlacementHub - Dashboard</title>
+  <title>PlacementHub - History</title>
   <link rel="stylesheet" href="student.css">
 </head>
 <body>
@@ -62,120 +62,99 @@
   </header>
 
   <main>
-    <h2>Hi John Doe, track your placement journey here.</h2>
-    
+    <h2>PlacementHub – My History</h2>
+    <p>Track your applications, tests, interviews, and offers in one place.</p>
+
     <section class="stats">
       <div class="stat-card">
-        <span>✅</span>
-        <h3>16</h3>
-        <p>Applied Jobs</p>
-      </div>
-      <div class="stat-card">
         <span>📝</span>
-        <h3>3</h3>
-        <p>Upcoming Tests</p>
+        <h3>0</h3>
+        <p>Total Applications</p>
       </div>
       <div class="stat-card">
-        <span>🎯</span>
-        <h3>5</h3>
-        <p>Shortlisted / Interviews</p>
+        <span>📊</span>
+        <h3>0</h3>
+        <p>Shortlisted</p>
       </div>
       <div class="stat-card">
-        <span>💼</span>
-        <h3>2</h3>
+        <span>🎤</span>
+        <h3>0</h3>
+        <p>Interviews Attended</p>
+      </div>
+      <div class="stat-card">
+        <span>🏆</span>
+        <h3>0</h3>
         <p>Offers Received</p>
       </div>
     </section>
 
-    <section>
-      <h2>Placement Timeline</h2>
-      <div>Applied → Test → Shortlisted → Interview → Offer → Joined</div>
+    <section class="filters">
+      <select data-filter>
+        <option>All Statuses</option>
+        <option>Applied</option>
+        <option>Test Scheduled</option>
+        <option>Shortlisted</option>
+        <option>Interview</option>
+        <option>Rejected</option>
+        <option>Offer</option>
+      </select>
+      <select data-filter>
+        <option>All Time</option>
+        <option>Last 6 Months</option>
+        <option>This Month</option>
+      </select>
+      <select data-filter>
+        <option>Date (Newest First)</option>
+        <option>Date (Oldest First)</option>
+        <option>Company (A-Z)</option>
+        <option>Company (Z-A)</option>
+        <option>Status (A-Z)</option>
+        <option>Status (Z-A)</option>
+      </select>
     </section>
 
     <section>
-      <h2>Job Applications</h2>
+      <h2>Application Timeline</h2>
+      <div>Loading...</div>
+    </section>
+
+    <section>
+      <h2>History Table</h2>
       <table>
         <tr>
           <th>Company Name</th>
           <th>Role</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td>Tech Solutions</td>
-          <td>Software Engineer</td>
-          <td>Applied</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Creative Labs</td>
-          <td>Data Analyst</td>
-          <td>Test</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Innovatech</td>
-          <td>Product Manager</td>
-          <td>Shortlisted</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Cyberdyne</td>
-          <td>UX Designer</td>
-          <td>Interview</td>
-          <td><button data-modal="application-details">View Details</button></td>
+          <th>Application Date</th>
+          <th>Current Status</th>
+          <th>Next Step</th>
+          <th>Actions</th>
         </tr>
       </table>
     </section>
 
     <section>
-      <h2>My Resume</h2>
-      <p>Resume_JohnDoe_2025.pdf</p>
-      <a href="resume_builder.html"><button>Build/Update Resume</button></a>
+      <h2>Offers Received</h2>
+      <p>No offers received yet.</p>
     </section>
 
     <section>
-      <h2>Practice & Mock Tests</h2>
-      <ul>
-        <li>Aptitude Test</li>
-        <li>Reasoning Test</li>
-        <li>Coding Challenges</li>
-        <li>English/Communication</li>
-      </ul>
-      <p>Top performers: Alice, Bob, Charlie</p>
+      <button>Download My History (CSV/PDF)</button>
     </section>
 
-    <section>
-      <h2>Notifications</h2>
-      <ul>
-        <li>📢 New Job posting: BlueTech Corp <small>2 hours ago</small></li>
-        <li>⏰ Interview reminder: Cyberdyne <small>Tomorrow at 9 AM</small></li>
-        <li>📩 Application update: Tech Solutions - Test cleared <small>Yesterday</small></li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>John Doe</h2>
-      <p>Branch: Computer Science</p>
-      <p>CGPA: 8.7</p>
-      <a href="profile.html"><button>View Full Profile</button></a>
-    </section>
-  </main>
-
-  <div class="modal" id="application-details">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Application Details</h2>
-      <p>Loading...</p>
+    <div class="modal" id="application-details">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Application Details</h2>
+        <p>Loading...</p>
+      </div>
     </div>
-  </div>
+  </main>
 
   <footer>
     <a href="#help">Help</a>
     <a href="#contact">Contact</a>
-    <a href="#faq">FAQ</a>
-    <a href="#privacy">Privacy</a>
-    <p>Credits: Team Codespark</p>
+    <a href="#privacy">Privacy Policy</a>
+    <p>GitHub Hackathon Credits</p>
   </footer>
 
   <script src="student.js"></script>

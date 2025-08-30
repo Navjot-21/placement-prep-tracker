@@ -1,0 +1,147 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlacementHub - Profile</title>
+  <link rel="stylesheet" href="student.css">
+</head>
+<body>
+  <header>
+    <h1>PlacementHub</h1>
+    <nav>
+      <ul>
+        <li><a href="student_dashboard.html">Dashboard</a></li>
+        <li><a href="jobs.html">Jobs</a></li>
+        <li><a href="resume_builder.html">Resume Builder</a></li>
+        <li><a href="practice_test.html">Practice Tests</a></li>
+        <li><a href="history.html">History</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="index.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>PlacementHub – My Profile</h2>
+    <p>Manage your personal details, resume, and placement journey.</p>
+
+    <section>
+      <h3>John Doe</h3>
+      <p>Roll No: 123456 | john@example.com</p>
+      <p>CSE - 4th Year</p>
+      <p>Not Placed</p>
+      <p>Profile Completeness: 0%</p>
+    </section>
+
+    <section>
+      <h3>Personal Information</h3>
+      <form>
+        <input type="text" placeholder="Full Name" required>
+        <input type="email" placeholder="Email" required>
+        <input type="tel" placeholder="Phone Number">
+        <input type="url" placeholder="LinkedIn Profile URL">
+        <input type="url" placeholder="GitHub Profile URL">
+        <input type="url" placeholder="Portfolio URL">
+        <textarea placeholder="Address (optional)"></textarea>
+        <button type="button">✏ Edit Info</button>
+        <button type="submit">💾 Save Changes</button>
+        <button type="button">📤 Export Profile</button>
+      </form>
+    </section>
+
+    <section>
+      <h3>Academic Details</h3>
+      <button type="button">+ Add More Education</button>
+    </section>
+
+    <section>
+      <h3>Skills</h3>
+      <select>
+        <option>Beginner</option>
+        <option>Intermediate</option>
+        <option>Advanced</option>
+      </select>
+      <input type="text" placeholder="Enter a skill, select proficiency level, and press Enter">
+      <p>Added skills show below. Click × to remove.</p>
+    </section>
+
+    <section>
+      <h3>Projects</h3>
+      <button type="button">+ Add Project</button>
+    </section>
+
+    <section>
+      <h3>Resume Management</h3>
+      <input type="file" accept=".pdf">
+      <button data-modal="resume-preview">📄 View Resume Preview</button>
+    </section>
+
+    <section>
+      <h3>Placement Progress Tracker</h3>
+      <div>Applied → Test → Shortlisted → Interview → Offer → Placed</div>
+    </section>
+
+    <section>
+      <h3>Achievements / Certifications</h3>
+      <input type="file" accept=".pdf,.jpg,.png">
+    </section>
+
+    <div class="modal" id="resume-preview">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Resume Preview</h2>
+        <p>Loading...</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <a href="#help">Help</a>
+    <a href="#contact">Contact</a>
+    <a href="#privacy">Privacy Policy</a>
+    <p>GitHub Hackathon Credits</p>
+  </footer>
+
+  <script src="student.js"></script>
+</body>
+</html>

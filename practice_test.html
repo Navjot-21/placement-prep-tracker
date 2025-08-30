@@ -42,7 +42,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlacementHub - Dashboard</title>
+  <title>PlacementHub - Practice Tests</title>
   <link rel="stylesheet" href="student.css">
 </head>
 <body>
@@ -62,120 +62,85 @@
   </header>
 
   <main>
-    <h2>Hi John Doe, track your placement journey here.</h2>
-    
+    <h2>PlacementHub – Practice Tests</h2>
+    <p>Sharpen your skills with mock tests and coding challenges tailored to your profile.</p>
+
     <section class="stats">
       <div class="stat-card">
         <span>✅</span>
-        <h3>16</h3>
-        <p>Applied Jobs</p>
+        <h3>0</h3>
+        <p>Tests Attempted</p>
       </div>
       <div class="stat-card">
-        <span>📝</span>
-        <h3>3</h3>
-        <p>Upcoming Tests</p>
+        <span>🏆</span>
+        <h3>0</h3>
+        <p>Best Score</p>
       </div>
       <div class="stat-card">
-        <span>🎯</span>
-        <h3>5</h3>
-        <p>Shortlisted / Interviews</p>
+        <span>⏳</span>
+        <h3>0 min</h3>
+        <p>Average Time per Test</p>
       </div>
       <div class="stat-card">
-        <span>💼</span>
-        <h3>2</h3>
-        <p>Offers Received</p>
+        <span>🔥</span>
+        <h3>0</h3>
+        <p>Current Streak</p>
       </div>
     </section>
 
-    <section>
-      <h2>Placement Timeline</h2>
-      <div>Applied → Test → Shortlisted → Interview → Offer → Joined</div>
+    <section class="filters">
+      <select data-filter>
+        <option>All Categories</option>
+        <option>Aptitude - Quant</option>
+        <option>Aptitude - Verbal</option>
+        <option>Aptitude - Logical</option>
+        <option>Coding - DSA</option>
+        <option>Coding - Algorithms</option>
+        <option>Coding - Web Dev</option>
+        <option>Company - Amazon</option>
+        <option>Company - Infosys</option>
+        <option>Company - Wipro</option>
+        <option>Domain - Core Engineering</option>
+        <option>Domain - Consulting</option>
+        <option>Domain - Data Science</option>
+      </select>
+      <select data-filter>
+        <option>All Difficulty Levels</option>
+        <option>Easy</option>
+        <option>Medium</option>
+        <option>Hard</option>
+      </select>
+      <select data-filter>
+        <option>All Statuses</option>
+        <option>Not Started</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+      </select>
     </section>
 
     <section>
-      <h2>Job Applications</h2>
-      <table>
-        <tr>
-          <th>Company Name</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td>Tech Solutions</td>
-          <td>Software Engineer</td>
-          <td>Applied</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Creative Labs</td>
-          <td>Data Analyst</td>
-          <td>Test</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Innovatech</td>
-          <td>Product Manager</td>
-          <td>Shortlisted</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Cyberdyne</td>
-          <td>UX Designer</td>
-          <td>Interview</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-      </table>
+      <h2>Daily Challenges 🔥 | Current Streak: 0</h2>
+      <button>Start Daily Challenge</button>
     </section>
 
-    <section>
-      <h2>My Resume</h2>
-      <p>Resume_JohnDoe_2025.pdf</p>
-      <a href="resume_builder.html"><button>Build/Update Resume</button></a>
-    </section>
-
-    <section>
-      <h2>Practice & Mock Tests</h2>
-      <ul>
-        <li>Aptitude Test</li>
-        <li>Reasoning Test</li>
-        <li>Coding Challenges</li>
-        <li>English/Communication</li>
-      </ul>
-      <p>Top performers: Alice, Bob, Charlie</p>
-    </section>
-
-    <section>
-      <h2>Notifications</h2>
-      <ul>
-        <li>📢 New Job posting: BlueTech Corp <small>2 hours ago</small></li>
-        <li>⏰ Interview reminder: Cyberdyne <small>Tomorrow at 9 AM</small></li>
-        <li>📩 Application update: Tech Solutions - Test cleared <small>Yesterday</small></li>
-      </ul>
-    </section>
-
-    <section>
-      <h2>John Doe</h2>
-      <p>Branch: Computer Science</p>
-      <p>CGPA: 8.7</p>
-      <a href="profile.html"><button>View Full Profile</button></a>
-    </section>
-  </main>
-
-  <div class="modal" id="application-details">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Application Details</h2>
-      <p>Loading...</p>
+    <div class="modal" id="test-interface">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Test Interface</h2>
+        <p>Time: 00:00</p>
+        <button>Pause</button>
+        <button>Previous</button>
+        <button>Next</button>
+        <button>Submit Test</button>
+      </div>
     </div>
-  </div>
+  </main>
 
   <footer>
     <a href="#help">Help</a>
     <a href="#contact">Contact</a>
-    <a href="#faq">FAQ</a>
-    <a href="#privacy">Privacy</a>
-    <p>Credits: Team Codespark</p>
+    <a href="#privacy">Privacy Policy</a>
+    <p>GitHub Hackathon Credits</p>
   </footer>
 
   <script src="student.js"></script>
