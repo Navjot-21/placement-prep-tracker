@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="PlacementHub: Your one-stop platform for job placements, resume building, and career preparation." />
+  <meta name="keywords" content="placement, job, resume, career, recruitment" />
+  <meta name="author" content="Team Codespark" />
+  <title>PlacementHub</title>
+  <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=PH" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Montserrat', Arial, sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      background: linear-gradient(90deg, #004e92, #007bff);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .logo:hover {
+      transform: scale(1.05);
+    }
+    .tagline {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #e0e7ef;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+    .nav-links a:hover {
+      color: #00c6fb;
+    }
+    .hero {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 3rem 2rem;
+      background: #fff;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .welcome {
+      max-width: 450px;
+      flex: 1;
+      min-width: 300px;
+    }
+    .welcome h1 {
+      font-size: 2.7rem;
+      margin-bottom: 0.5rem;
+      color: #004e92;
+      line-height: 1.2;
+    }
+    .welcome p {
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      color: #444;
+    }
+    .input-section {
+      background: #eef6fb;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-bottom: 1rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .input-section:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .input-section label {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+    }
+    .input-section input,
+    .input-section select {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #c3cad2;
+      transition: border-color 0.3s ease;
+    }
+    .input-section input:focus,
+    .input-section select:focus {
+      outline: none;
+      border-color: #004e92;
+      box-shadow: 0 0 0 2px rgba(0,78,146,0.2);
+    }
+    .input-section button {
+      background: #004e92;
+      color: #fff;
+      border: none;
+      padding: 0.7rem 1.7rem;
+      border-radius: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .input-section button:hover {
+      background: #003a6d;
+      transform: translateY(-2px);
+    }
+    .google-sign-in-button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 4px;
+      background: #fff;
+      color: #555;
+      box-shadow: 0 1px 4px rgba(60,64,67,0.3);
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      margin-top: 0.5rem;
+      width: fit-content;
+      transition: background 0.3s ease;
+    }
+    .google-sign-in-button:hover {
+      background: #f6f6f6;
+    }
+    .actions {
+      margin-top: 0.4rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .actions button {
+      background: #00c6fb;
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.3rem;
+      border-radius: 18px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .actions button:hover {
+      background: #00a1d6;
+      transform: translateY(-2px);
+    }
+    .illustration {
+      flex: 1;
+      text-align: center;
+      min-width: 250px;
+    }
+    .illustration img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    .features {
+      display: flex;
+      justify-content: center;
+      margin: 3rem 1rem;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .feature-card {
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      padding: 1.7rem 1.2rem;
+      text-align: center;
+      width: 220px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .feature-card .icon {
+      font-size: 2.3rem;
+      margin-bottom: 0.7rem;
+      color: #004e92;
+    }
+    .feature-card h3 {
+      margin: 0.3rem 0 0.8rem 0;
+      color: #004e92;
+      font-size: 1.2rem;
+    }
+    .feature-card p {
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .footer {
+      background: linear-gradient(90deg, #004e92, #007bff);
+      color: #fff;
+      text-align: center;
+      padding: 1.5rem 0;
+      margin-top: auto;
+    }
+    .footer a {
+      color: #fff;
+      margin: 0 0.8rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .footer a:hover {
+      color: #00c6fb;
+    }
+    .footer .credits {
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+      color: #e0e7ef;
+    }
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #004e92;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .nav-links {
+        margin-top: 0.5rem;
+      }
+      .hero {
+        flex-direction: column;
+        text-align: center;
+      }
+      .welcome {
+        max-width: 100%;
+      }
+      .illustration img {
+        max-width: 80%;
+      }
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+      .feature-card {
+        width: 80%;
+        max-width: 300px;
+      }
+    }
+    @media (max-width: 480px) {
+      .welcome h1 {
+        font-size: 2rem;
+      }
+      .welcome p {
+        font-size: 1rem;
+      }
+      .input-section {
+        padding: 1rem;
+      }
+      .input-section button {
+        width: 100%;
+      }
+      .google-sign-in-button {
+        width: 100%;
+        justify-content: center;
+      }
+      .actions {
+        flex-direction: column;
+        align-items: center;
+      }
+      .actions button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+  </div>
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <span class="logo" role="img" aria-label="PlacementHub logo">PlacementHub</span>
+    <span class="tagline">Prepare better. Apply smarter. Get placed faster.</span>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="help.html">Help/FAQ</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <section class="hero" aria-labelledby="welcome-heading">
+    <div class="welcome">
+      <h1 id="welcome-heading">Welcome to PlacementHub</h1>
+      <p>Your one-stop platform for placements, from resume to offer.</p>
+      <div class="input-section">
+        <label for="name">Name / Email</label>
+        <input id="name" type="text" placeholder="Enter your name or email" aria-required="true" required />
+        <label for="role">Select your role</label>
+        <select id="role" aria-required="true" required>
+          <option value="student">Student</option>
+          <option value="tpo">TPO / Admin</option>
+          <option value="recruiter">Recruiter / Company</option>
+        </select>
+        <button onclick="handleLogin()">Login / Continue</button>
+        <div style="margin-top:1rem;">
+          <div id="g_id_onload"
+               data-client_id="YOUR_CLIENT_ID.apps.googleusercontent.com"
+               data-context="signin"
+               data-ux_mode="popup"
+               data-login_uri="https://yourdomain.com/google-login-callback"
+               data-auto_prompt="false">
+          </div>
+          <div class="g_id_signin"
+               data-type="standard"
+               data-shape="rectangular"
+               data-theme="outline"
+               data-text="sign_in_with"
+               data-size="large"
+               data-locale="en"
+               data-logo_alignment="left">
+          </div>
+          <button type="button" class="google-sign-in-button" onclick="handleGoogleLogin()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
+                 width="20px" style="vertical-align: middle; margin-right:8px;" alt="Google logo" />
+            Login with Google
+          </button>
+        </div>
+      </div>
+      <div class="actions">
+        <button onclick="location.href='signup.html'">Get Started</button>
+        <button onclick="window.scrollTo({top: document.querySelector('.features').offsetTop, behavior:'smooth'});">Explore Features</button>
+      </div>
+    </div>
+    <div class="illustration">
+      <img src="https://undraw.co/api/random?placement" alt="Illustration of students preparing for placements" style="max-width:320px;" />
+    </div>
+  </section>
+
+  <section class="features" aria-label="Platform features">
+    <div class="feature-card">
+      <div class="icon" aria-hidden="true">✨</div>
+      <h3>Resume Builder</h3>
+      <p>Create professional resumes in minutes and download easily.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon" aria-hidden="true">💼</div>
+      <h3>Job Applications</h3>
+      <p>Browse jobs and apply directly from your dashboard.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon" aria-hidden="true">📝</div>
+      <h3>Practice Tests</h3>
+      <p>Sharpen your skills with topic-wise and mock tests.</p>
+    </div>
+    <div class="feature-card">
+      <div class="icon" aria-hidden="true">📊</div>
+      <h3>Placement Tracking</h3>
+      <p>Monitor your application progress and placement stats.</p>
+    </div>
+  </section>
+
+  <footer class="footer" role="contentinfo">
+    <div>
+      <a href="about.html" aria-label="About PlacementHub">About</a> •
+      <a href="help.html" aria-label="Help and FAQ">Help/FAQ</a> •
+      <a href="contact.html" aria-label="Contact us">Contact</a> •
+      <a href="privacy.html" aria-label="Privacy Policy">Privacy Policy</a>
+    </div>
+    <div class="credits">Credits: Team Codespark</div>
+  </footer>
+
+  <script>
+    function showLoading() {
+      document.getElementById('loading').style.display = 'flex';
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+    }
+
+    function validateForm() {
+      const nameInput = document.getElementById('name').value.trim();
+      const roleSelect = document.getElementById('role').value;
+      if (!nameInput) {
+        alert('Please enter your name or email.');
+        return false;
+      }
+      if (!roleSelect) {
+        alert('Please select a role.');
+        return false;
+      }
+      return true;
+    }
+
+    function handleLogin() {
+      if (validateForm()) {
+        showLoading();
+        setTimeout(() => {
+          hideLoading();
+          location.href = 'dashboard.html';
+        }, 1000);
+      }
+    }
+
+    function handleGoogleLogin() {
+      showLoading();
+      setTimeout(() => {
+        hideLoading();
+        alert('Google Login demo – connect OAuth for full flow!');
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
