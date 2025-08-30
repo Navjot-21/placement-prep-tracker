@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviews - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="recruiter.css">
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="recruiter_dashboard.html">Dashboard</a></li>
+                <li><a href="post_job.html">Post Job</a></li>
+                <li><a href="manage_jobs.html">Manage Jobs</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="interviews.html">Interviews</a></li>
+               
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Interview Management</h2>
+            <p>Schedule, conduct, and manage interviews with candidates</p>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <span>📅</span>
+                <h3>12</h3>
+                <p>Scheduled Interviews</p>
+            </div>
+            <div class="stat-card">
+                <span>🕐</span>
+                <h3>5</h3>
+                <p>Today's Interviews</p>
+            </div>
+            <div class="stat-card">
+                <span>✅</span>
+                <h3>23</h3>
+                <p>Completed Interviews</p>
+            </div>
+            <div class="stat-card">
+                <span>⏳</span>
+                <h3>3</h3>
+                <p>Pending Feedback</p>
+            </div>
+        </section>
+
+        <section class="interview-scheduler">
+            <h3>Quick Schedule Interview</h3>
+            <form data-form-type="interview-schedule">
+                <div class="form-row">
+                    <select name="candidate" required>
+                        <option value="">Select Candidate</option>
+                        <option value="alice">Alice Johnson - Software Engineer</option>
+                        <option value="bob">Bob Smith - Data Scientist</option>
+                        <option value="carol">Carol Davis - Frontend Developer</option>
+                    </select>
+                    <select name="interviewer" required>
+                        <option value="">Select Interviewer</option>
+                        <option value="john">John Doe - Engineering Manager</option>
+                        <option value="jane">Jane Smith - Senior Developer</option>
+                        <option value="mike">Mike Johnson - HR Manager</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <input type="date" name="date" required>
+                    <select name="duration" required>
+                        <option value="">Duration</option>
+                        <option value="30">30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="90">90 minutes</option>
+                    </select>
+                </div>
+                <div class="time-slots">
+                    <div class="time-slot">09:00 AM</div>
+                    <div class="time-slot">10:00 AM</div>
+                    <div class="time-slot booked">11:00 AM</div>
+                    <div class="time-slot">02:00 PM</div>
+                    <div class="time-slot">03:00 PM</div>
+                    <div class="time-slot">04:00 PM</div>
+                </div>
+                <button type="submit" class="btn primary">Schedule Interview</button>
+            </form>
+        </section>
+
+        <section class="table-container">
+            <h3>Today's Interview Schedule</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Interviewer</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>09:00 AM</strong></td>
+                        <td>
+                            <div>
+                                <strong>Alice Johnson</strong><br>
+                                <small>alice.johnson@email.com</small>
+                            </div>
+                        </td>
+                        <td>Software Engineer</td>
+                        <td>John Doe</td>
+                        <td>Technical</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td>
+                            <button class="btn primary">Join Interview</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>02:00 PM</strong></td>
+                        <td>
+                            <div>
+                                <strong>Carol Davis</strong><br>
+                                <small>carol.davis@email.com</small>
+                            </div>
+                        </td>
+                        <td>Frontend Developer</td>
+                        <td>Jane Smith</td>
+                        <td>Technical</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td>
+                            <button class="btn primary">Join Interview</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>04:00 PM</strong></td>
+                        <td>
+                            <div>
+                                <strong>David Wilson</strong><br>
+                                <small>david.wilson@email.com</small>
+                            </div>
+                        </td>
+                        <td>Product Manager</td>
+                        <td>Mike Johnson</td>
+                        <td>Final Round</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td>
+                            <button class="btn primary">Join Interview</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-container">
+            <h3>All Interviews</h3>
+            <div class="filters">
+                <select data-filter="status">
+                    <option>All Statuses</option>
+                    <option>Scheduled</option>
+                    <option>In Progress</option>
+                    <option>Completed</option>
+                    <option>Cancelled</option>
+                    <option>No Show</option>
+                </select>
+                <select data-filter="type">
+                    <option>All Types</option>
+                    <option>Technical</option>
+                    <option>HR Round</option>
+                    <option>Final Round</option>
+                    <option>Culture Fit</option>
+                </select>
+                <select data-filter="date">
+                    <option>All Dates</option>
+                    <option>Today</option>
+                    <option>This Week</option>
+                    <option>Next Week</option>
+                    <option>This Month</option>
+                </select>
+                <input type="search" placeholder="Search candidates...">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Interviewer</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Score</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>Dec 17, 09:00 AM</strong><br>
+                            <small>Tomorrow</small>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>Alice Johnson</strong><br>
+                                <small>alice.johnson@email.com</small>
+                            </div>
+                        </td>
+                        <td>Software Engineer</td>
+                        <td>John Doe</td>
+                        <td>Technical</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn secondary">Reschedule</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Dec 15, 02:00 PM</strong><br>
+                            <small>Yesterday</small>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>Bob Smith</strong><br>
+                                <small>bob.smith@email.com</small>
+                            </div>
+                        </td>
+                        <td>Data Scientist</td>
+                        <td>Jane Smith</td>
+                        <td>Technical</td>
+                        <td><span class="status-badge status-offer">Completed</span></td>
+                        <td><strong>8.5/10</strong></td>
+                        <td>
+                            <button class="btn secondary">View Feedback</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Dec 14, 10:00 AM</strong><br>
+                            <small>2 days ago</small>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>Emily Brown</strong><br>
+                                <small>emily.brown@email.com</small>
+                            </div>
+                        </td>
+                        <td>Software Engineer</td>
+                        <td>John Doe</td>
+                        <td>Final Round</td>
+                        <td><span class="status-badge status-offer">Completed</span></td>
+                        <td><strong>9.2/10</strong></td>
+                        <td>
+                            <button class="btn primary">Generate Offer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Dec 13, 03:00 PM</strong><br>
+                            <small>3 days ago</small>
+                        </td>
+                        <td>
+                            <div>
+                                <strong>Frank Garcia</strong><br>
+                                <small>frank.garcia@email.com</small>
+                            </div>
+                        </td>
+                        <td>Data Scientist</td>
+                        <td>Mike Johnson</td>
+                        <td>HR Round</td>
+                        <td><span class="status-badge status-rejected">Completed</span></td>
+                        <td><strong>5.2/10</strong></td>
+                        <td>
+                            <button class="btn secondary">View Feedback</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="analytics-grid">
+            <div class="analytics-card">
+                <span class="analytics-icon">📊</span>
+                <div class="analytics-value">87%</div>
+                <div class="analytics-label">Interview Show-up Rate</div>
+                <div class="analytics-trend trend-up">+5% this month</div>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-icon">⏱️</span>
+                <div class="analytics-value">42 min</div>
+                <div class="analytics-label">Avg Interview Duration</div>
+                <div class="analytics-trend trend-down">-3 min this month</div>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-icon">⭐</span>
+                <div class="analytics-value">7.8</div>
+                <div class="analytics-label">Avg Interview Score</div>
+                <div class="analytics-trend trend-up">+0.3 this month</div>
+            </div>
+            <div class="analytics-card">
+                <span class="analytics-icon">✅</span>
+                <div class="analytics-value">68%</div>
+                <div class="analytics-label">Interview Pass Rate</div>
+                <div class="analytics-trend trend-up">+8% this month</div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Interview Tools & Resources</h3>
+            <div class="quick-actions">
+                <button class="btn secondary">📝 Interview Question Bank</button>
+                <button class="btn secondary">📋 Evaluation Templates</button>
+                <button class="btn secondary">📹 Start Video Interview</button>
+                <button class="btn secondary">📊 Interview Analytics</button>
+                <button class="btn secondary">📧 Send Reminder Emails</button>
+                <button class="btn secondary">📅 Bulk Reschedule</button>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Interviewer Availability</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Interviewer</th>
+                            <th>Role</th>
+                            <th>Available Today</th>
+                            <th>This Week</th>
+                            <th>Interview Load</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>John Doe</strong></td>
+                            <td>Engineering Manager</td>
+                            <td>✅ 2-4 PM</td>
+                            <td>15 slots</td>
+                            <td>8 interviews</td>
+                            <td><button class="btn secondary">View Calendar</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jane Smith</strong></td>
+                            <td>Senior Developer</td>
+                            <td>✅ 10-12 PM</td>
+                            <td>12 slots</td>
+                            <td>5 interviews</td>
+                            <td><button class="btn secondary">View Calendar</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mike Johnson</strong></td>
+                            <td>HR Manager</td>
+                            <td>❌ Busy</td>
+                            <td>8 slots</td>
+                            <td>6 interviews</td>
+                            <td><button class="btn secondary">View Calendar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
+
+    <script src="../global.js"></script>
+    <script src="recruiter.js"></script>
+</body>
+</html>

@@ -1,157 +1,307 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlacementHub - Post a Job</title>
+    <title>Post Job - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
     <link rel="stylesheet" href="recruiter.css">
-    <script src="recruiter.js" defer></script>
 </head>
 <body>
     <header>
         <h1>PlacementHub</h1>
         <nav>
-            <a href="recruiter_dashboard.html">Dashboard</a>
-            <a href="post_job.html" class="active">Post Job</a>
-            <a href="applicants.html">Applicants</a>
-            <a href="shortlist.html">Shortlist</a>
-            <a href="offers.html">Offers</a>
-            <a href="index.html">Logout</a>
+            <ul>
+                <li><a href="recruiter_dashboard.html">Dashboard</a></li>
+                <li><a href="post_job.html">Post Job</a></li>
+                <li><a href="manage_jobs.html">Manage Jobs</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="interviews.html">Interviews</a></li>
+                
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
         </nav>
     </header>
 
     <main>
-        <h2>PlacementHub – Post a Job</h2>
-        <p>Create and publish job opportunities for students.</p>
-        <section>
-            <form>
-                <h3>Basic Information</h3>
-                <label for="company-name">Company Name:</label>
-                <input type="text" id="company-name" required>
-                <label for="job-title">Job Title / Role:</label>
-                <input type="text" id="job-title" required>
-                <p>Job title is required.</p>
-                <label for="job-type">Job Type:</label>
-                <select id="job-type" required>
-                    <option value="">-- Select --</option>
-                    <option value="full-time">Full-Time</option>
-                    <option value="internship">Internship</option>
-                    <option value="contract">Contract</option>
-                </select>
-                <p>Job type is required.</p>
-                <label for="salary">Salary / Stipend (LPA or per month):</label>
-                <input type="text" id="salary" placeholder="e.g., 7 LPA or 25000 per month" required>
-                <p>Package must be in the format '7 LPA' or '25000 per month'.</p>
-                <label for="tier">Tier:</label>
-                <select id="tier" required>
-                    <option value="">-- Select --</option>
-                    <option value="tier-1">Tier-1</option>
-                    <option value="tier-2">Tier-2</option>
-                    <option value="tier-3">Tier-3</option>
-                    <option value="internship">Internship</option>
-                </select>
-                <p>Tier is required.</p>
-
-                <h3>Eligibility Criteria</h3>
-                <label for="cgpa">Minimum CGPA:</label>
-                <input type="number" id="cgpa" min="0" max="10" required>
-                <p>CGPA must be between 0 and 10.</p>
-                <label>Allowed Branches:</label>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="branch" value="cse"> CSE</label>
-                    <label><input type="checkbox" name="branch" value="ece"> ECE</label>
-                    <label><input type="checkbox" name="branch" value="me"> ME</label>
-                    <label><input type="checkbox" name="branch" value="ce"> CE</label>
-                    <label><input type="checkbox" name="branch" value="ee"> EE</label>
-                </div>
-                <p>At least one branch must be selected.</p>
-                <label>Backlogs Allowed:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="backlogs" value="yes" required> Yes</label>
-                    <label><input type="radio" name="backlogs" value="no"> No</label>
-                </div>
-                <p>Please select if backlogs are allowed.</p>
-                <label for="skills">Skills Required (use comma separated tags):</label>
-                <input type="text" id="skills" placeholder="e.g., Python, Java, SQL">
-
-                <h3>Job Description & Responsibilities</h3>
-                <label for="description">Role Description & Key Responsibilities:</label>
-                <textarea id="description" required></textarea>
-                <p>Job description is required.</p>
-
-                <h3>Important Dates</h3>
-                <label for="deadline">Application Deadline:</label>
-                <input type="date" id="deadline" required>
-                <p>Application deadline is required and cannot be in the past.</p>
-                <label for="test-date">Tentative Test/Interview Date:</label>
-                <input type="date" id="test-date">
-
-                <h3>Attachments (Optional)</h3>
-                <label for="jd-upload">Upload JD (Job Description) PDF:</label>
-                <input type="file" id="jd-upload" accept=".pdf">
-
-                <div class="form-actions">
-                    <button type="button">Preview Job</button>
-                    <button type="submit">Submit for Approval</button>
-                    <button type="button">Save as Draft</button>
-                </div>
-            </form>
+        <section class="hero">
+            <h2>Post a New Job</h2>
+            <p>Create detailed job postings to attract the right candidates</p>
         </section>
 
-        <section class="modal" id="job-preview">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h3>Job Preview</h3>
-                <h4>Job Title Here</h4>
-                <p><strong>Package:</strong> -</p>
-                <p><strong>Eligibility:</strong> -</p>
-                <button>Apply</button>
+        <div class="job-form">
+            <form id="job-form">
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    <input type="text" name="title" placeholder="Job Title *" required>
+                    <div class="form-row">
+                        <select name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="engineering">Engineering</option>
+                            <option value="product">Product</option>
+                            <option value="design">Design</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="sales">Sales</option>
+                            <option value="hr">Human Resources</option>
+                            <option value="finance">Finance</option>
+                            <option value="operations">Operations</option>
+                        </select>
+                        <select name="employmentType" required>
+                            <option value="">Employment Type</option>
+                            <option value="full-time">Full Time</option>
+                            <option value="part-time">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="internship">Internship</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <select name="experienceLevel" required>
+                            <option value="">Experience Level</option>
+                            <option value="entry">Entry Level (0-1 years)</option>
+                            <option value="junior">Junior (1-3 years)</option>
+                            <option value="mid">Mid Level (3-5 years)</option>
+                            <option value="senior">Senior (5+ years)</option>
+                            <option value="lead">Lead/Manager (7+ years)</option>
+                        </select>
+                        <select name="workLocation" required>
+                            <option value="">Work Location</option>
+                            <option value="remote">Remote</option>
+                            <option value="onsite">On-site</option>
+                            <option value="hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Job Description</h3>
+                    <textarea name="description" placeholder="Provide a detailed job description including responsibilities, day-to-day tasks, and what makes this role exciting..." rows="6" required></textarea>
+                    <textarea name="requirements" placeholder="List the required qualifications, skills, and experience. Be specific about must-have vs nice-to-have requirements..." rows="5" required></textarea>
+                    <input type="text" name="skills" placeholder="Required Skills (comma-separated): JavaScript, React, Node.js...">
+                </div>
+
+                <div class="form-section">
+                    <h3>Location & Compensation</h3>
+                    <div class="form-row">
+                        <input type="text" name="location" placeholder="Job Location (City, State)">
+                        <select name="currency">
+                            <option value="INR">INR (₹)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" name="salaryMin" placeholder="Minimum Salary (Annual)">
+                        <input type="number" name="salaryMax" placeholder="Maximum Salary (Annual)">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" name="benefits" placeholder="Benefits (Health insurance, PF, etc.)">
+                        <input type="text" name="perks" placeholder="Perks (Flexible hours, WFH, etc.)">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Application Settings</h3>
+                    <div class="form-row">
+                        <input type="date" name="applicationDeadline" required>
+                        <input type="number" name="positions" placeholder="Number of Positions" min="1" value="1">
+                    </div>
+                    <div class="form-row">
+                        <select name="applicationMethod">
+                            <option value="platform">Apply through PlacementHub</option>
+                            <option value="email">Apply via Email</option>
+                            <option value="external">External Application Link</option>
+                        </select>
+                        <input type="email" name="contactEmail" placeholder="Contact Email (optional)">
+                    </div>
+                    <input type="url" name="externalLink" placeholder="External Application Link (if applicable)">
+                </div>
+
+                <div class="form-section">
+                    <h3>Screening Questions (Optional)</h3>
+                    <textarea name="screeningQuestion1" placeholder="Screening Question 1 (e.g., Why are you interested in this role?)" rows="2"></textarea>
+                    <textarea name="screeningQuestion2" placeholder="Screening Question 2 (e.g., Describe your relevant experience)" rows="2"></textarea>
+                    <textarea name="screeningQuestion3" placeholder="Screening Question 3 (e.g., What are your salary expectations?)" rows="2"></textarea>
+                </div>
+
+                <div class="form-section">
+                    <h3>Company Information</h3>
+                    <input type="text" name="company" value="TechCorp Solutions" readonly>
+                    <textarea name="companyDescription" placeholder="Brief company description for this job posting..." rows="3"></textarea>
+                    <input type="url" name="companyWebsite" placeholder="Company Website URL">
+                </div>
+
+                <div class="form-section">
+                    <h3>Additional Settings</h3>
+                    <div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="urgentHiring">
+                            <span>Mark as Urgent Hiring</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="remoteOk">
+                            <span>Remote Work Available</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" name="freshersWelcome" checked>
+                            <span>Freshers Welcome</span>
+                        </label>
+                    </div>
+                    <select name="jobVisibility">
+                        <option value="public">Public (Visible to all students)</option>
+                        <option value="targeted">Targeted (Specific colleges/courses)</option>
+                        <option value="draft">Save as Draft</option>
+                    </select>
+                </div>
+
+                <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+                    <button type="button" class="btn secondary" onclick="saveAsDraft()">Save as Draft</button>
+                    <button type="button" class="btn secondary" data-modal="job-preview">Preview Job</button>
+                    <button type="submit" class="btn primary">Post Job</button>
+                    <button type="button" class="btn secondary" onclick="clearForm()">Clear Form</button>
+                </div>
+            </form>
+        </div>
+
+        <section class="feature-card">
+            <h3>Job Posting Tips</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1rem;">
+                <div>
+                    <h4>✍️ Writing Effective Job Descriptions</h4>
+                    <ul style="text-align: left; color: var(--gray-600);">
+                        <li>Be specific about daily responsibilities</li>
+                        <li>Highlight growth opportunities</li>
+                        <li>Mention company culture and values</li>
+                        <li>Use inclusive language</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>🎯 Attracting Quality Candidates</h4>
+                    <ul style="text-align: left; color: var(--gray-600);">
+                        <li>Set realistic experience requirements</li>
+                        <li>Offer competitive compensation</li>
+                        <li>Highlight unique benefits and perks</li>
+                        <li>Respond to applications promptly</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>📊 Optimizing for Better Results</h4>
+                    <ul style="text-align: left; color: var(--gray-600);">
+                        <li>Use relevant keywords for discoverability</li>
+                        <li>Keep requirements focused and essential</li>
+                        <li>Set appropriate application deadlines</li>
+                        <li>Update job status regularly</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Previous Job Templates</h3>
+            <p>Use these templates to quickly create similar job postings:</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                <button class="btn secondary" onclick="loadTemplate('software-engineer')">Software Engineer Template</button>
+                <button class="btn secondary" onclick="loadTemplate('data-scientist')">Data Scientist Template</button>
+                <button class="btn secondary" onclick="loadTemplate('product-manager')">Product Manager Template</button>
+                <button class="btn secondary" onclick="loadTemplate('intern')">Internship Template</button>
             </div>
         </section>
     </main>
 
+    <div class="modal" id="job-preview">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Job Preview</h2>
+            <p>Loading job preview...</p>
+        </div>
+    </div>
+
     <footer>
-        <a href="#help">Help</a> | <a href="#contact">Contact</a> | <a href="#privacy">Privacy Policy</a>
-        <p>GitHub Hackathon Credits</p>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
     </footer>
+
+    <script src="../global.js"></script>
+    <script src="recruiter.js"></script>
+    <script>
+        // Form template functionality
+        function loadTemplate(templateType) {
+            const form = document.getElementById('job-form');
+            const templates = {
+                'software-engineer': {
+                    title: 'Software Engineer',
+                    department: 'engineering',
+                    employmentType: 'full-time',
+                    experienceLevel: 'junior',
+                    workLocation: 'hybrid',
+                    description: 'We are looking for a passionate Software Engineer to join our growing team. You will be responsible for developing scalable web applications, collaborating with cross-functional teams, and contributing to architectural decisions.',
+                    requirements: 'Bachelor\'s degree in Computer Science or related field\nStrong proficiency in JavaScript, Python, or Java\nExperience with web development frameworks (React, Angular, or Vue)\nFamiliarity with databases (SQL/NoSQL)\nExcellent problem-solving and communication skills',
+                    skills: 'JavaScript, React, Node.js, Python, SQL, Git'
+                },
+                'data-scientist': {
+                    title: 'Data Scientist',
+                    department: 'engineering',
+                    employmentType: 'full-time',
+                    experienceLevel: 'mid',
+                    workLocation: 'remote',
+                    description: 'Join our data science team to build machine learning models and derive insights from large datasets. You will work on end-to-end data science projects and collaborate with product teams.',
+                    requirements: 'Master\'s degree in Data Science, Statistics, or related field\nProficiency in Python/R and SQL\nExperience with machine learning frameworks\nStrong statistical analysis skills\nExperience with data visualization tools',
+                    skills: 'Python, R, SQL, TensorFlow, Pandas, Scikit-learn'
+                }
+            };
+            
+            const template = templates[templateType];
+            if (template) {
+                Object.keys(template).forEach(key => {
+                    const field = form.querySelector(`[name="${key}"]`);
+                    if (field) {
+                        field.value = template[key];
+                    }
+                });
+                showNotification(`${templateType.replace('-', ' ').toUpperCase()} template loaded!`, 'success');
+            }
+        }
+
+        function saveAsDraft() {
+            const form = document.getElementById('job-form');
+            const formData = new FormData(form);
+            const jobData = Object.fromEntries(formData);
+            localStorage.setItem('jobDraft', JSON.stringify(jobData));
+            showNotification('Job saved as draft!', 'success');
+        }
+
+        function clearForm() {
+            if (confirm('Are you sure you want to clear all form data?')) {
+                document.getElementById('job-form').reset();
+                localStorage.removeItem('jobDraft');
+                showNotification('Form cleared!', 'info');
+            }
+        }
+
+        // Load draft on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const draft = localStorage.getItem('jobDraft');
+            if (draft) {
+                try {
+                    const draftData = JSON.parse(draft);
+                    const form = document.getElementById('job-form');
+                    Object.keys(draftData).forEach(key => {
+                        const field = form.querySelector(`[name="${key}"]`);
+                        if (field && draftData[key]) {
+                            if (field.type === 'checkbox') {
+                                field.checked = draftData[key] === 'on';
+                            } else {
+                                field.value = draftData[key];
+                            }
+                        }
+                    });
+                    showNotification('Draft loaded!', 'info');
+                } catch (e) {
+                    console.error('Error loading draft:', e);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

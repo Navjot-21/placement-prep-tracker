@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Jobs - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="recruiter.css">
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="recruiter_dashboard.html">Dashboard</a></li>
+                <li><a href="post_job.html">Post Job</a></li>
+                <li><a href="manage_jobs.html">Manage Jobs</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="interviews.html">Interviews</a></li>
+                
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Manage Job Postings</h2>
+            <p>View, edit, and manage all your job postings in one place</p>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <span>📋</span>
+                <h3>8</h3>
+                <p>Active Jobs</p>
+            </div>
+            <div class="stat-card">
+                <span>⏸️</span>
+                <h3>3</h3>
+                <p>Paused Jobs</p>
+            </div>
+            <div class="stat-card">
+                <span>✅</span>
+                <h3>12</h3>
+                <p>Filled Positions</p>
+            </div>
+            <div class="stat-card">
+                <span>📊</span>
+                <h3>156</h3>
+                <p>Total Applications</p>
+            </div>
+        </section>
+
+        <section class="filters">
+            <select data-filter="status">
+                <option>All Statuses</option>
+                <option>Active</option>
+                <option>Paused</option>
+                <option>Filled</option>
+                <option>Expired</option>
+                <option>Draft</option>
+            </select>
+            <select data-filter="department">
+                <option>All Departments</option>
+                <option>Engineering</option>
+                <option>Product</option>
+                <option>Design</option>
+                <option>Marketing</option>
+                <option>Sales</option>
+                <option>HR</option>
+            </select>
+            <select data-filter="type">
+                <option>All Types</option>
+                <option>Full Time</option>
+                <option>Part Time</option>
+                <option>Contract</option>
+                <option>Internship</option>
+            </select>
+            <select data-filter="sort">
+                <option>Recent Jobs</option>
+                <option>Most Applications</option>
+                <option>Closing Soon</option>
+                <option>Job Title A-Z</option>
+            </select>
+            <button class="btn primary" style="margin-left: auto;">+ Post New Job</button>
+        </section>
+
+        <section class="job-listings-container">
+            <div class="job-listing">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Software Engineer</h3>
+                        <p class="job-company">Engineering • Full Time • Bangalore</p>
+                    </div>
+                    <div class="job-status">
+                        <span class="status-badge status-shortlisted">Active</span>
+                    </div>
+                </div>
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Applications</div>
+                        <div class="job-detail-value">45</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Shortlisted</div>
+                        <div class="job-detail-value">12</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Package</div>
+                        <div class="job-detail-value">₹12-15 LPA</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">Dec 25, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Posted</div>
+                        <div class="job-detail-value">Dec 10, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Views</div>
+                        <div class="job-detail-value">234</div>
+                    </div>
+                </div>
+                <div class="job-actions">
+                    <button class="btn secondary" onclick="viewJobDetails('job-1')">View Details</button>
+                    <button class="btn secondary" onclick="editJob('job-1')">Edit Job</button>
+                    <button class="btn secondary" onclick="viewApplications('job-1')">View Applications (45)</button>
+                    <button class="btn secondary" onclick="duplicateJob('job-1')">Duplicate</button>
+                    <button class="btn primary" onclick="toggleJobStatus('job-1')">Pause Job</button>
+                </div>
+            </div>
+
+            <div class="job-listing">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Data Scientist</h3>
+                        <p class="job-company">Engineering • Full Time • Remote</p>
+                    </div>
+                    <div class="job-status">
+                        <span class="status-badge status-shortlisted">Active</span>
+                    </div>
+                </div>
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Applications</div>
+                        <div class="job-detail-value">32</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Shortlisted</div>
+                        <div class="job-detail-value">8</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Package</div>
+                        <div class="job-detail-value">₹18-22 LPA</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">Dec 30, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Posted</div>
+                        <div class="job-detail-value">Dec 8, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Views</div>
+                        <div class="job-detail-value">189</div>
+                    </div>
+                </div>
+                <div class="job-actions">
+                    <button class="btn secondary" onclick="viewJobDetails('job-2')">View Details</button>
+                    <button class="btn secondary" onclick="editJob('job-2')">Edit Job</button>
+                    <button class="btn secondary" onclick="viewApplications('job-2')">View Applications (32)</button>
+                    <button class="btn secondary" onclick="duplicateJob('job-2')">Duplicate</button>
+                    <button class="btn primary" onclick="toggleJobStatus('job-2')">Pause Job</button>
+                </div>
+            </div>
+
+            <div class="job-listing">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Frontend Developer</h3>
+                        <p class="job-company">Engineering • Full Time • Hybrid</p>
+                    </div>
+                    <div class="job-status">
+                        <span class="status-badge status-shortlisted">Active</span>
+                    </div>
+                </div>
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Applications</div>
+                        <div class="job-detail-value">28</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Shortlisted</div>
+                        <div class="job-detail-value">6</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Package</div>
+                        <div class="job-detail-value">₹10-14 LPA</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">Dec 20, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Posted</div>
+                        <div class="job-detail-value">Dec 5, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Views</div>
+                        <div class="job-detail-value">167</div>
+                    </div>
+                </div>
+                <div class="job-actions">
+                    <button class="btn secondary" onclick="viewJobDetails('job-3')">View Details</button>
+                    <button class="btn secondary" onclick="editJob('job-3')">Edit Job</button>
+                    <button class="btn secondary" onclick="viewApplications('job-3')">View Applications (28)</button>
+                    <button class="btn secondary" onclick="duplicateJob('job-3')">Duplicate</button>
+                    <button class="btn primary" onclick="toggleJobStatus('job-3')">Pause Job</button>
+                </div>
+            </div>
+
+            <div class="job-listing">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Product Manager</h3>
+                        <p class="job-company">Product • Full Time • Bangalore</p>
+                    </div>
+                    <div class="job-status">
+                        <span class="status-badge status-reviewing">Paused</span>
+                    </div>
+                </div>
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Applications</div>
+                        <div class="job-detail-value">21</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Shortlisted</div>
+                        <div class="job-detail-value">4</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Package</div>
+                        <div class="job-detail-value">₹20-25 LPA</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Deadline</div>
+                        <div class="job-detail-value">Jan 5, 2025</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Posted</div>
+                        <div class="job-detail-value">Dec 1, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Views</div>
+                        <div class="job-detail-value">145</div>
+                    </div>
+                </div>
+                <div class="job-actions">
+                    <button class="btn secondary" onclick="viewJobDetails('job-4')">View Details</button>
+                    <button class="btn secondary" onclick="editJob('job-4')">Edit Job</button>
+                    <button class="btn secondary" onclick="viewApplications('job-4')">View Applications (21)</button>
+                    <button class="btn secondary" onclick="duplicateJob('job-4')">Duplicate</button>
+                    <button class="btn primary" onclick="toggleJobStatus('job-4')">Activate Job</button>
+                </div>
+            </div>
+
+            <div class="job-listing">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Summer Internship - Development</h3>
+                        <p class="job-company">Engineering • Internship • Remote</p>
+                    </div>
+                    <div class="job-status">
+                        <span class="status-badge status-offer">Filled</span>
+                    </div>
+                </div>
+                <div class="job-details">
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Applications</div>
+                        <div class="job-detail-value">67</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Selected</div>
+                        <div class="job-detail-value">5</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Stipend</div>
+                        <div class="job-detail-value">₹25K/month</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Duration</div>
+                        <div class="job-detail-value">3 months</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Posted</div>
+                        <div class="job-detail-value">Nov 25, 2024</div>
+                    </div>
+                    <div class="job-detail-item">
+                        <div class="job-detail-label">Views</div>
+                        <div class="job-detail-value">312</div>
+                    </div>
+                </div>
+                <div class="job-actions">
+                    <button class="btn secondary" onclick="viewJobDetails('job-5')">View Details</button>
+                    <button class="btn secondary" onclick="viewApplications('job-5')">View Applications (67)</button>
+                    <button class="btn secondary" onclick="duplicateJob('job-5')">Duplicate</button>
+                    <button class="btn secondary">Archive Job</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Bulk Actions</h3>
+            <p>Perform actions on multiple jobs at once:</p>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                <button class="btn secondary">Select All Active Jobs</button>
+                <button class="btn secondary">Bulk Pause Jobs</button>
+                <button class="btn secondary">Bulk Extend Deadline</button>
+                <button class="btn secondary">Export Job Data</button>
+                <button class="btn secondary">Generate Report</button>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Job Performance Analytics</h3>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <span class="analytics-icon">👀</span>
+                    <div class="analytics-value">1,247</div>
+                    <div class="analytics-label">Total Job Views</div>
+                    <div class="analytics-trend trend-up">+15% this week</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">📝</span>
+                    <div class="analytics-value">193</div>
+                    <div class="analytics-label">Total Applications</div>
+                    <div class="analytics-trend trend-up">+8% this week</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">🎯</span>
+                    <div class="analytics-value">15.5%</div>
+                    <div class="analytics-label">View to Apply Rate</div>
+                    <div class="analytics-trend trend-up">+2% this week</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">⭐</span>
+                    <div class="analytics-value">4.2</div>
+                    <div class="analytics-label">Average Job Quality Score</div>
+                    <div class="analytics-trend trend-up">+0.3 this week</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="job-preview">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Job Details</h2>
+            <p>Loading job details...</p>
+        </div>
+    </div>
+
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
+
+    <script src="../global.js"></script>
+    <script src="recruiter.js"></script>
+    <script>
+        function duplicateJob(jobId) {
+            showNotification('Job duplicated successfully! You can now edit the copy.', 'success');
+        }
+    </script>
+</body>
+</html>
