@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="student.css">
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="student_dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="resume_builder.html">Resume Builder</a></li>
+                <li><a href="practice_test.html">Practice Tests</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>My Profile</h2>
+            <p>Manage your personal details, resume, and placement journey</p>
+        </section>
+
+        <section class="feature-card">
+            <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 2rem;">
+                <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--primary-dark);">
+                    JD
+                </div>
+                <div>
+                    <h3>John Doe</h3>
+                    <p><strong>Roll No:</strong> 2021CS123 | <strong>Email:</strong> john.doe@college.edu</p>
+                    <p><strong>Branch:</strong> Computer Science Engineering - 4th Year</p>
+                    <p><strong>Status:</strong> <span class="status-badge status-offer">Placed</span></p>
+                </div>
+            </div>
+            
+            <div class="profile-completion">
+                <h4>Profile Completeness: <span class="completion-percentage">85%</span></h4>
+                <div class="completion-bar">
+                    <div class="completion-progress" style="width: 85%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Personal Information</h3>
+            <form data-form-type="profile-update">
+                <div class="form-row">
+                    <input type="text" name="firstName" placeholder="First Name" value="John" required>
+                    <input type="text" name="lastName" placeholder="Last Name" value="Doe" required>
+                </div>
+                <div class="form-row">
+                    <input type="email" name="email" placeholder="Email" value="john.doe@college.edu" required>
+                    <input type="tel" name="phone" placeholder="Phone Number" value="+1-234-567-8900">
+                </div>
+                <div class="form-row">
+                    <input type="url" name="linkedin" placeholder="LinkedIn Profile URL" value="https://linkedin.com/in/johndoe">
+                    <input type="url" name="github" placeholder="GitHub Profile URL" value="https://github.com/johndoe">
+                </div>
+                <input type="url" name="portfolio" placeholder="Portfolio URL" value="https://johndoe.dev">
+                <textarea name="address" placeholder="Address (optional)" rows="3">123 College Street, University Town, State 12345</textarea>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="button" class="btn secondary">Edit Info</button>
+                    <button type="submit" class="btn primary">Save Changes</button>
+                    <button type="button" class="btn secondary">Export Profile</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="feature-card">
+            <h3>Academic Details</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Degree</th>
+                            <th>Institution</th>
+                            <th>Year</th>
+                            <th>CGPA/Percentage</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>B.Tech Computer Science</td>
+                            <td>University College of Engineering</td>
+                            <td>2021-2025</td>
+                            <td>8.7 CGPA</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>12th Grade (Science)</td>
+                            <td>ABC Senior Secondary School</td>
+                            <td>2021</td>
+                            <td>92%</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>10th Grade</td>
+                            <td>ABC Secondary School</td>
+                            <td>2019</td>
+                            <td>95%</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn secondary">+ Add More Education</button>
+        </section>
+
+        <section class="feature-card">
+            <h3>Skills & Expertise</h3>
+            <div class="form-row">
+                <input type="text" id="skill-input" placeholder="Enter a skill and press Enter">
+                <select>
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option selected>Advanced</option>
+                    <option>Expert</option>
+                </select>
+            </div>
+            <div class="skills-container">
+                <div class="skill-tag">JavaScript <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">Python <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">React <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">Node.js <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">MongoDB <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">Git <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">Docker <button class="skill-remove">&times;</button></div>
+                <div class="skill-tag">AWS <button class="skill-remove">&times;</button></div>
+            </div>
+            <p style="color: var(--gray-500); font-size: 0.875rem; margin-top: 1rem;">
+                Click × to remove skills. Your skills help match you with relevant job opportunities.
+            </p>
+        </section>
+
+        <section class="feature-card">
+            <h3>Projects & Experience</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Project/Experience</th>
+                            <th>Type</th>
+                            <th>Duration</th>
+                            <th>Technologies</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>E-Commerce Web App</strong><br>
+                                <small>Full-stack web application with payment integration</small>
+                            </td>
+                            <td>Personal Project</td>
+                            <td>3 months</td>
+                            <td>React, Node.js, MongoDB</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Software Engineering Intern</strong><br>
+                                <small>TechStart Solutions - Backend development</small>
+                            </td>
+                            <td>Internship</td>
+                            <td>Jun-Aug 2024</td>
+                            <td>Python, Flask, PostgreSQL</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Mobile Task Manager</strong><br>
+                                <small>Cross-platform mobile app with cloud sync</small>
+                            </td>
+                            <td>Team Project</td>
+                            <td>4 months</td>
+                            <td>React Native, Firebase</td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button type="button" class="btn secondary">+ Add Project/Experience</button>
+        </section>
+
+        <section class="feature-card">
+            <h3>Resume Management</h3>
+            <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1rem;">
+                <div>
+                    <h4>Current Resume</h4>
+                    <p>Resume_JohnDoe_2024.pdf</p>
+                    <p style="color: var(--gray-500); font-size: 0.875rem;">Last updated: Dec 15, 2024</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn secondary" data-modal="resume-preview">📄 Preview</button>
+                    <button class="btn secondary">📥 Download</button>
+                    <button class="btn primary">🔄 Update Resume</button>
+                </div>
+            </div>
+            <input type="file" accept=".pdf" style="margin-top: 1rem;">
+            <p style="color: var(--gray-500); font-size: 0.875rem; margin-top: 0.5rem;">
+                Upload a new resume (PDF only, max 5MB)
+            </p>
+        </section>
+
+        <section class="feature-card">
+            <h3>Placement Progress Tracker</h3>
+            <div class="progress-tracker">
+                <div class="progress-steps">
+                    <div class="progress-step completed">1</div>
+                    <div class="progress-step completed">2</div>
+                    <div class="progress-step completed">3</div>
+                    <div class="progress-step completed">4</div>
+                    <div class="progress-step completed">5</div>
+                </div>
+                <div class="progress-labels" style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <span>Applied</span>
+                    <span>Test</span>
+                    <span>Shortlisted</span>
+                    <span>Interview</span>
+                    <span>Placed</span>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <h4 style="color: var(--success-color);">🎉 Congratulations! You are placed!</h4>
+                <p>TechCorp Solutions - Software Engineer - ₹12 LPA</p>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Achievements & Certifications</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Achievement/Certification</th>
+                            <th>Issuer</th>
+                            <th>Date</th>
+                            <th>Certificate</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AWS Certified Developer</td>
+                            <td>Amazon Web Services</td>
+                            <td>Nov 2024</td>
+                            <td><a href="#" class="btn secondary">View</a></td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>First Prize - College Hackathon</td>
+                            <td>University College</td>
+                            <td>Oct 2024</td>
+                            <td><a href="#" class="btn secondary">View</a></td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>React Developer Certification</td>
+                            <td>freeCodeCamp</td>
+                            <td>Sep 2024</td>
+                            <td><a href="#" class="btn secondary">View</a></td>
+                            <td><button class="btn secondary">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style="margin-top: 1rem;">
+                <input type="file" accept=".pdf,.jpg,.png" multiple>
+                <p style="color: var(--gray-500); font-size: 0.875rem; margin-top: 0.5rem;">
+                    Upload certificates (PDF, JPG, PNG - max 5MB each)
+                </p>
+                <button type="button" class="btn secondary">+ Add Achievement</button>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Privacy & Settings</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4>Profile Visibility</h4>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox" checked>
+                        <span>Make profile visible to recruiters</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox" checked>
+                        <span>Allow companies to contact me</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox">
+                        <span>Show salary expectations</span>
+                    </label>
+                </div>
+                <div>
+                    <h4>Notifications</h4>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox" checked>
+                        <span>Email notifications</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox" checked>
+                        <span>Job match alerts</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0;">
+                        <input type="checkbox">
+                        <span>Weekly summary reports</span>
+                    </label>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
+                <h4 style="color: var(--error-color);">Danger Zone</h4>
+                <button class="btn" style="background: var(--error-color); margin-top: 1rem;">Delete Account</button>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="resume-preview">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Resume Preview</h2>
+            <p>Loading resume preview...</p>
+        </div>
+    </div>
+
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
+
+    <script src="../global.js"></script>
+    <script src="student.js"></script>
+</body>
+</html>

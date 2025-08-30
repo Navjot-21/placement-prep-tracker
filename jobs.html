@@ -1,154 +1,303 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlacementHub - Jobs</title>
-  <link rel="stylesheet" href="student.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="student.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <ul>
-        <li><a href="student_dashboard.html">Dashboard</a></li>
-        <li><a href="jobs.html">Jobs</a></li>
-        <li><a href="resume_builder.html">Resume Builder</a></li>
-        <li><a href="practice_test.html">Practice Tests</a></li>
-        <li><a href="history.html">History</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><a href="index.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="student_dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="resume_builder.html">Resume Builder</a></li>
+                <li><a href="practice_test.html">Practice Tests</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
-    <h2>PlacementHub – Available Jobs</h2>
-    <p>Browse and apply for job and internship opportunities.</p>
+    <main>
+        <section class="hero">
+            <h2>Available Job Opportunities</h2>
+            <p>Browse and apply for job and internship opportunities tailored to your profile</p>
+        </section>
 
-    <section class="stats">
-      <div class="stat-card">
-        <span>📋</span>
-        <h3>0</h3>
-        <p>Total Jobs Available</p>
-      </div>
-      <div class="stat-card">
-        <span>📝</span>
-        <h3>0</h3>
-        <p>Jobs Applied</p>
-      </div>
-      <div class="stat-card">
-        <span>✅</span>
-        <h3>0</h3>
-        <p>Shortlisted</p>
-      </div>
-      <div class="stat-card">
-        <span>⏰</span>
-        <h3>0</h3>
-        <p>Deadlines Approaching</p>
-      </div>
-    </section>
+        <section class="stats">
+            <div class="stat-card">
+                <span>📋</span>
+                <h3>45</h3>
+                <p>Total Jobs Available</p>
+            </div>
+            <div class="stat-card">
+                <span>📝</span>
+                <h3>16</h3>
+                <p>Jobs Applied</p>
+            </div>
+            <div class="stat-card">
+                <span>✅</span>
+                <h3>5</h3>
+                <p>Shortlisted</p>
+            </div>
+            <div class="stat-card">
+                <span>⏰</span>
+                <h3>3</h3>
+                <p>Deadlines This Week</p>
+            </div>
+        </section>
 
-    <section class="filters">
-      <select data-filter>
-        <option>All Domains</option>
-        <option>Software</option>
-        <option>Core</option>
-        <option>Consulting</option>
-        <option>Finance</option>
-        <option>Marketing</option>
-      </select>
-      <select data-filter>
-        <option>All Packages & Internships</option>
-        <option>Tier-1</option>
-        <option>Tier-2</option>
-        <option>Tier-3</option>
-        <option>Internships</option>
-      </select>
-      <select data-filter>
-        <option>All Locations</option>
-        <option>Remote</option>
-        <option>New York</option>
-        <option>San Francisco</option>
-        <option>Bangalore</option>
-        <option>London</option>
-      </select>
-      <select data-filter>
-        <option>Latest Jobs</option>
-        <option>Highest Package</option>
-        <option>Closing Soon</option>
-      </select>
-    </section>
+        <section class="filters">
+            <select data-filter="domain">
+                <option>All Domains</option>
+                <option>Software Engineering</option>
+                <option>Data Science</option>
+                <option>Product Management</option>
+                <option>Consulting</option>
+                <option>Finance</option>
+                <option>Marketing</option>
+            </select>
+            <select data-filter="package">
+                <option>All Packages</option>
+                <option>Tier-1 (15+ LPA)</option>
+                <option>Tier-2 (8-15 LPA)</option>
+                <option>Tier-3 (4-8 LPA)</option>
+                <option>Internships</option>
+            </select>
+            <select data-filter="location">
+                <option>All Locations</option>
+                <option>Remote</option>
+                <option>Bangalore</option>
+                <option>Mumbai</option>
+                <option>Delhi</option>
+                <option>Hyderabad</option>
+                <option>Chennai</option>
+            </select>
+            <select data-filter="sort">
+                <option>Latest Jobs</option>
+                <option>Highest Package</option>
+                <option>Closing Soon</option>
+                <option>Most Applied</option>
+            </select>
+        </section>
 
-    <section>
-      <table>
-        <tr>
-          <th>Company</th>
-          <th>Role</th>
-          <th>Location</th>
-          <th>Package</th>
-          <th>Deadline</th>
-          <th>Actions</th>
-        </tr>
-      </table>
-    </section>
+        <section class="job-grid">
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Software Engineer</h3>
+                        <p class="job-company">TechCorp Solutions</p>
+                    </div>
+                    <span class="status-badge status-applied">Applied</span>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Package</div>
+                        <div class="job-meta-value">₹12 LPA</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Bangalore</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Experience</div>
+                        <div class="job-meta-value">0-2 years</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Dec 31, 2024</div>
+                    </div>
+                </div>
+                <p>We are looking for passionate software engineers to join our dynamic team and work on cutting-edge technologies...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary applied" disabled>Applied</button>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Data Scientist</h3>
+                        <p class="job-company">DataFlow Analytics</p>
+                    </div>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Package</div>
+                        <div class="job-meta-value">₹15 LPA</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Mumbai</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Experience</div>
+                        <div class="job-meta-value">1-3 years</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Jan 15, 2025</div>
+                    </div>
+                </div>
+                <p>Join our data science team to build machine learning models and derive insights from large datasets...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary apply-btn" data-job-id="job-2">Apply Now</button>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Product Manager</h3>
+                        <p class="job-company">Innovation Labs</p>
+                    </div>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Package</div>
+                        <div class="job-meta-value">₹18 LPA</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Remote</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Experience</div>
+                        <div class="job-meta-value">2-4 years</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Jan 10, 2025</div>
+                    </div>
+                </div>
+                <p>Lead product development initiatives and work closely with engineering and design teams...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary apply-btn" data-job-id="job-3">Apply Now</button>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Frontend Developer</h3>
+                        <p class="job-company">WebTech Solutions</p>
+                    </div>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Package</div>
+                        <div class="job-meta-value">₹10 LPA</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Hyderabad</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Experience</div>
+                        <div class="job-meta-value">0-2 years</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Jan 20, 2025</div>
+                    </div>
+                </div>
+                <p>Build responsive and interactive user interfaces using modern frontend technologies...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary apply-btn" data-job-id="job-4">Apply Now</button>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Business Analyst</h3>
+                        <p class="job-company">ConsultPro</p>
+                    </div>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Package</div>
+                        <div class="job-meta-value">₹8 LPA</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Delhi</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Experience</div>
+                        <div class="job-meta-value">0-1 years</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Jan 25, 2025</div>
+                    </div>
+                </div>
+                <p>Analyze business processes and requirements to provide data-driven insights and recommendations...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary apply-btn" data-job-id="job-5">Apply Now</button>
+                </div>
+            </div>
+
+            <div class="job-card">
+                <div class="job-header">
+                    <div>
+                        <h3 class="job-title">Summer Intern</h3>
+                        <p class="job-company">StartupCo</p>
+                    </div>
+                </div>
+                <div class="job-meta">
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Stipend</div>
+                        <div class="job-meta-value">₹25K/month</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Location</div>
+                        <div class="job-meta-value">Remote</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Duration</div>
+                        <div class="job-meta-value">3 months</div>
+                    </div>
+                    <div class="job-meta-item">
+                        <div class="job-meta-label">Deadline</div>
+                        <div class="job-meta-value">Feb 1, 2025</div>
+                    </div>
+                </div>
+                <p>Gain hands-on experience in a fast-paced startup environment working on real-world projects...</p>
+                <div class="job-actions">
+                    <button class="btn secondary" data-modal="job-details">View Details</button>
+                    <button class="btn primary apply-btn" data-job-id="job-6">Apply Now</button>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <div class="modal" id="job-details">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Job Details</h2>
-        <p>Loading...</p>
-        <button>Apply with Resume</button>
-      </div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Job Details</h2>
+            <p>Loading job details...</p>
+        </div>
     </div>
-  </main>
 
-  <footer>
-    <a href="#help">Help</a>
-    <a href="#contact">Contact</a>
-    <a href="#privacy">Privacy Policy</a>
-    <p>GitHub Hackathon Credits</p>
-  </footer>
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
 
-  <script src="student.js"></script>
+    <script src="../global.js"></script>
+    <script src="student.js"></script>
 </body>
 </html>

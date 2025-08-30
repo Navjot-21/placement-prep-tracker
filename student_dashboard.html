@@ -1,183 +1,207 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlacementHub - Dashboard</title>
-  <link rel="stylesheet" href="student.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="student.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <ul>
-        <li><a href="student_dashboard.html">Dashboard</a></li>
-        <li><a href="jobs.html">Jobs</a></li>
-        <li><a href="resume_builder.html">Resume Builder</a></li>
-        <li><a href="practice_test.html">Practice Tests</a></li>
-        <li><a href="history.html">History</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><a href="index.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="student_dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="resume_builder.html">Resume Builder</a></li>
+                <li><a href="practice_test.html">Practice Tests</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
-    <h2>Hi John Doe, track your placement journey here.</h2>
-    
-    <section class="stats">
-      <div class="stat-card">
-        <span>✅</span>
-        <h3>16</h3>
-        <p>Applied Jobs</p>
-      </div>
-      <div class="stat-card">
-        <span>📝</span>
-        <h3>3</h3>
-        <p>Upcoming Tests</p>
-      </div>
-      <div class="stat-card">
-        <span>🎯</span>
-        <h3>5</h3>
-        <p>Shortlisted / Interviews</p>
-      </div>
-      <div class="stat-card">
-        <span>💼</span>
-        <h3>2</h3>
-        <p>Offers Received</p>
-      </div>
-    </section>
+    <main>
+        <div class="dashboard-welcome">
+            <h2>Welcome back, John!</h2>
+            <p>Track your placement journey and achieve your career goals</p>
+        </div>
 
-    <section>
-      <h2>Placement Timeline</h2>
-      <div>Applied → Test → Shortlisted → Interview → Offer → Joined</div>
-    </section>
+        <section class="stats">
+            <div class="stat-card">
+                <span>📝</span>
+                <h3>16</h3>
+                <p>Applied Jobs</p>
+            </div>
+            <div class="stat-card">
+                <span>📊</span>
+                <h3>3</h3>
+                <p>Upcoming Tests</p>
+            </div>
+            <div class="stat-card">
+                <span>🎯</span>
+                <h3>5</h3>
+                <p>Shortlisted</p>
+            </div>
+            <div class="stat-card">
+                <span>🏆</span>
+                <h3>2</h3>
+                <p>Offers Received</p>
+            </div>
+        </section>
 
-    <section>
-      <h2>Job Applications</h2>
-      <table>
-        <tr>
-          <th>Company Name</th>
-          <th>Role</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-        <tr>
-          <td>Tech Solutions</td>
-          <td>Software Engineer</td>
-          <td>Applied</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Creative Labs</td>
-          <td>Data Analyst</td>
-          <td>Test</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Innovatech</td>
-          <td>Product Manager</td>
-          <td>Shortlisted</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-        <tr>
-          <td>Cyberdyne</td>
-          <td>UX Designer</td>
-          <td>Interview</td>
-          <td><button data-modal="application-details">View Details</button></td>
-        </tr>
-      </table>
-    </section>
+        <section class="progress-tracker">
+            <h3>Placement Progress</h3>
+            <div class="progress-steps">
+                <div class="progress-step completed">1</div>
+                <div class="progress-step completed">2</div>
+                <div class="progress-step active">3</div>
+                <div class="progress-step">4</div>
+                <div class="progress-step">5</div>
+            </div>
+            <div class="progress-labels">
+                <span>Applied</span>
+                <span>Test</span>
+                <span>Shortlisted</span>
+                <span>Interview</span>
+                <span>Offer</span>
+            </div>
+        </section>
 
-    <section>
-      <h2>My Resume</h2>
-      <p>Resume_JohnDoe_2025.pdf</p>
-      <a href="resume_builder.html"><button>Build/Update Resume</button></a>
-    </section>
+        <section class="quick-actions">
+            <a href="jobs.html" class="quick-action">
+                <span class="icon">💼</span>
+                <h4>Browse Jobs</h4>
+                <p>Find new opportunities</p>
+            </a>
+            <a href="resume_builder.html" class="quick-action">
+                <span class="icon">📄</span>
+                <h4>Update Resume</h4>
+                <p>Keep your profile current</p>
+            </a>
+            <a href="practice_test.html" class="quick-action">
+                <span class="icon">📝</span>
+                <h4>Practice Tests</h4>
+                <p>Improve your skills</p>
+            </a>
+            <a href="applications.html" class="quick-action">
+                <span class="icon">📊</span>
+                <h4>Track Applications</h4>
+                <p>Monitor your progress</p>
+            </a>
+        </section>
 
-    <section>
-      <h2>Practice & Mock Tests</h2>
-      <ul>
-        <li>Aptitude Test</li>
-        <li>Reasoning Test</li>
-        <li>Coding Challenges</li>
-        <li>English/Communication</li>
-      </ul>
-      <p>Top performers: Alice, Bob, Charlie</p>
-    </section>
+        <section class="profile-completion">
+            <h3>Profile Completion</h3>
+            <div class="completion-bar">
+                <div class="completion-progress" style="width: 75%;"></div>
+            </div>
+            <p>Your profile is <span class="completion-percentage">75%</span> complete</p>
+            <div class="completion-items">
+                <div class="completion-item completed">
+                    <span class="icon">✓</span>
+                    <span>Basic Information</span>
+                </div>
+                <div class="completion-item completed">
+                    <span class="icon">✓</span>
+                    <span>Skills Added</span>
+                </div>
+                <div class="completion-item">
+                    <span class="icon">○</span>
+                    <span>Projects Added</span>
+                </div>
+                <div class="completion-item completed">
+                    <span class="icon">✓</span>
+                    <span>Resume Uploaded</span>
+                </div>
+            </div>
+        </section>
 
-    <section>
-      <h2>Notifications</h2>
-      <ul>
-        <li>📢 New Job posting: BlueTech Corp <small>2 hours ago</small></li>
-        <li>⏰ Interview reminder: Cyberdyne <small>Tomorrow at 9 AM</small></li>
-        <li>📩 Application update: Tech Solutions - Test cleared <small>Yesterday</small></li>
-      </ul>
-    </section>
+        <section class="table-container">
+            <h3>Recent Applications</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Role</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tech Solutions</td>
+                        <td>Software Engineer</td>
+                        <td>Dec 15, 2024</td>
+                        <td><span class="status-badge status-applied">Applied</span></td>
+                        <td><button class="btn secondary" data-modal="application-timeline">View Details</button></td>
+                    </tr>
+                    <tr>
+                        <td>Creative Labs</td>
+                        <td>Data Analyst</td>
+                        <td>Dec 10, 2024</td>
+                        <td><span class="status-badge status-shortlisted">Shortlisted</span></td>
+                        <td><button class="btn secondary" data-modal="application-timeline">View Details</button></td>
+                    </tr>
+                    <tr>
+                        <td>Innovatech</td>
+                        <td>Product Manager</td>
+                        <td>Dec 5, 2024</td>
+                        <td><span class="status-badge status-interview">Interview</span></td>
+                        <td><button class="btn secondary" data-modal="application-timeline">View Details</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    <section>
-      <h2>John Doe</h2>
-      <p>Branch: Computer Science</p>
-      <p>CGPA: 8.7</p>
-      <a href="profile.html"><button>View Full Profile</button></a>
-    </section>
-  </main>
+        <section class="notifications">
+            <h3>Recent Notifications</h3>
+            <div class="notification-item">
+                <div class="notification-icon">📢</div>
+                <div class="notification-content">
+                    <div class="notification-title">New Job Posted</div>
+                    <div class="notification-text">Software Engineer position at BlueTech Corp</div>
+                    <div class="notification-time">2 hours ago</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">⏰</div>
+                <div class="notification-content">
+                    <div class="notification-title">Interview Reminder</div>
+                    <div class="notification-text">Interview scheduled for tomorrow at 9 AM</div>
+                    <div class="notification-time">1 day ago</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">✅</div>
+                <div class="notification-content">
+                    <div class="notification-title">Application Update</div>
+                    <div class="notification-text">Tech Solutions - Test cleared successfully</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-  <div class="modal" id="application-details">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Application Details</h2>
-      <p>Loading...</p>
+    <div class="modal" id="application-timeline">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Application Timeline</h2>
+            <p>Loading timeline...</p>
+        </div>
     </div>
-  </div>
 
-  <footer>
-    <a href="#help">Help</a>
-    <a href="#contact">Contact</a>
-    <a href="#faq">FAQ</a>
-    <a href="#privacy">Privacy</a>
-    <p>Credits: Team Codespark</p>
-  </footer>
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
 
-  <script src="student.js"></script>
+    <script src="../global.js"></script>
+    <script src="student.js"></script>
 </body>
 </html>

@@ -1,148 +1,289 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PlacementHub - Practice Tests</title>
-  <link rel="stylesheet" href="student.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Tests - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="student.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <ul>
-        <li><a href="student_dashboard.html">Dashboard</a></li>
-        <li><a href="jobs.html">Jobs</a></li>
-        <li><a href="resume_builder.html">Resume Builder</a></li>
-        <li><a href="practice_test.html">Practice Tests</a></li>
-        <li><a href="history.html">History</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><a href="index.html">Logout</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="student_dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="resume_builder.html">Resume Builder</a></li>
+                <li><a href="practice_test.html">Practice Tests</a></li>
+                <li><a href="applications.html">Applications</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main>
-    <h2>PlacementHub – Practice Tests</h2>
-    <p>Sharpen your skills with mock tests and coding challenges tailored to your profile.</p>
+    <main>
+        <section class="hero">
+            <h2>Practice Tests</h2>
+            <p>Sharpen your skills with mock tests and coding challenges tailored to your profile</p>
+        </section>
 
-    <section class="stats">
-      <div class="stat-card">
-        <span>✅</span>
-        <h3>0</h3>
-        <p>Tests Attempted</p>
-      </div>
-      <div class="stat-card">
-        <span>🏆</span>
-        <h3>0</h3>
-        <p>Best Score</p>
-      </div>
-      <div class="stat-card">
-        <span>⏳</span>
-        <h3>0 min</h3>
-        <p>Average Time per Test</p>
-      </div>
-      <div class="stat-card">
-        <span>🔥</span>
-        <h3>0</h3>
-        <p>Current Streak</p>
-      </div>
-    </section>
+        <section class="stats">
+            <div class="stat-card">
+                <span>✅</span>
+                <h3>12</h3>
+                <p>Tests Completed</p>
+            </div>
+            <div class="stat-card">
+                <span>🏆</span>
+                <h3>85%</h3>
+                <p>Best Score</p>
+            </div>
+            <div class="stat-card">
+                <span>⏳</span>
+                <h3>25 min</h3>
+                <p>Avg Time per Test</p>
+            </div>
+            <div class="stat-card">
+                <span>🔥</span>
+                <h3>7</h3>
+                <p>Current Streak</p>
+            </div>
+        </section>
 
-    <section class="filters">
-      <select data-filter>
-        <option>All Categories</option>
-        <option>Aptitude - Quant</option>
-        <option>Aptitude - Verbal</option>
-        <option>Aptitude - Logical</option>
-        <option>Coding - DSA</option>
-        <option>Coding - Algorithms</option>
-        <option>Coding - Web Dev</option>
-        <option>Company - Amazon</option>
-        <option>Company - Infosys</option>
-        <option>Company - Wipro</option>
-        <option>Domain - Core Engineering</option>
-        <option>Domain - Consulting</option>
-        <option>Domain - Data Science</option>
-      </select>
-      <select data-filter>
-        <option>All Difficulty Levels</option>
-        <option>Easy</option>
-        <option>Medium</option>
-        <option>Hard</option>
-      </select>
-      <select data-filter>
-        <option>All Statuses</option>
-        <option>Not Started</option>
-        <option>In Progress</option>
-        <option>Completed</option>
-      </select>
-    </section>
+        <section class="filters">
+            <select data-filter="category">
+                <option>All Categories</option>
+                <option>Aptitude - Quantitative</option>
+                <option>Aptitude - Verbal</option>
+                <option>Aptitude - Logical</option>
+                <option>Coding - Data Structures</option>
+                <option>Coding - Algorithms</option>
+                <option>Coding - Web Development</option>
+                <option>Company Specific</option>
+                <option>Domain Specific</option>
+            </select>
+            <select data-filter="difficulty">
+                <option>All Difficulty Levels</option>
+                <option>Easy</option>
+                <option>Medium</option>
+                <option>Hard</option>
+            </select>
+            <select data-filter="status">
+                <option>All Tests</option>
+                <option>Not Started</option>
+                <option>In Progress</option>
+                <option>Completed</option>
+            </select>
+            <select data-filter="duration">
+                <option>All Durations</option>
+                <option>Quick (< 15 min)</option>
+                <option>Standard (15-30 min)</option>
+                <option>Extended (> 30 min)</option>
+            </select>
+        </section>
 
-    <section>
-      <h2>Daily Challenges 🔥 | Current Streak: 0</h2>
-      <button>Start Daily Challenge</button>
-    </section>
+        <section class="feature-card" style="text-align: center; margin: 2rem 0;">
+            <h3>🔥 Daily Challenge</h3>
+            <p>Maintain your streak with today's challenge!</p>
+            <p><strong>Current Streak: 7 days</strong></p>
+            <button class="btn primary test-action" data-test-type="Daily Challenge">Start Daily Challenge</button>
+        </section>
+
+        <section class="test-categories">
+            <div class="test-category">
+                <h3>📊 Aptitude Tests</h3>
+                <div class="test-list">
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Quantitative Aptitude</h4>
+                            <div class="test-meta">30 questions • 45 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Quantitative Aptitude">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Verbal Reasoning</h4>
+                            <div class="test-meta">25 questions • 30 min • Easy</div>
+                        </div>
+                        <button class="test-action" data-test-type="Verbal Reasoning">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Logical Reasoning</h4>
+                            <div class="test-meta">20 questions • 35 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Logical Reasoning">Start Test</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <h3>💻 Coding Challenges</h3>
+                <div class="test-list">
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Data Structures & Algorithms</h4>
+                            <div class="test-meta">5 problems • 90 min • Hard</div>
+                        </div>
+                        <button class="test-action" data-test-type="DSA">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>JavaScript Fundamentals</h4>
+                            <div class="test-meta">15 questions • 30 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="JavaScript">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Python Programming</h4>
+                            <div class="test-meta">10 problems • 60 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Python">Start Test</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <h3>🏢 Company-Specific</h3>
+                <div class="test-list">
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>TCS CodeVita Practice</h4>
+                            <div class="test-meta">6 problems • 120 min • Hard</div>
+                        </div>
+                        <button class="test-action" data-test-type="TCS CodeVita">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Infosys InfyTQ Mock</h4>
+                            <div class="test-meta">40 questions • 90 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Infosys Mock">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Wipro NLTH Practice</h4>
+                            <div class="test-meta">3 sections • 120 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Wipro NLTH">Start Test</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="test-category">
+                <h3>🎯 Domain-Specific</h3>
+                <div class="test-list">
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Data Science Fundamentals</h4>
+                            <div class="test-meta">25 questions • 45 min • Medium</div>
+                        </div>
+                        <button class="test-action" data-test-type="Data Science">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Web Development</h4>
+                            <div class="test-meta">20 questions • 40 min • Easy</div>
+                        </div>
+                        <button class="test-action" data-test-type="Web Development">Start Test</button>
+                    </div>
+                    <div class="test-item">
+                        <div class="test-info">
+                            <h4>Machine Learning Basics</h4>
+                            <div class="test-meta">15 questions • 30 min • Hard</div>
+                        </div>
+                        <button class="test-action" data-test-type="Machine Learning">Start Test</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Recent Test Results</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Score</th>
+                            <th>Time Taken</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Quantitative Aptitude</td>
+                            <td><span class="status-badge status-offer">85%</span></td>
+                            <td>42 min</td>
+                            <td>Dec 15, 2024</td>
+                            <td><button class="btn secondary">View Report</button></td>
+                        </tr>
+                        <tr>
+                            <td>JavaScript Fundamentals</td>
+                            <td><span class="status-badge status-shortlisted">78%</span></td>
+                            <td>28 min</td>
+                            <td>Dec 14, 2024</td>
+                            <td><button class="btn secondary">View Report</button></td>
+                        </tr>
+                        <tr>
+                            <td>Logical Reasoning</td>
+                            <td><span class="status-badge status-applied">65%</span></td>
+                            <td>35 min</td>
+                            <td>Dec 13, 2024</td>
+                            <td><button class="btn secondary">View Report</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Performance Analytics</h3>
+            <div class="stats" style="margin: 1rem 0;">
+                <div class="stat-card">
+                    <h4>Aptitude</h4>
+                    <p><strong>82%</strong></p>
+                    <p>Average Score</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Coding</h4>
+                    <p><strong>75%</strong></p>
+                    <p>Average Score</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Improvement</h4>
+                    <p><strong>+12%</strong></p>
+                    <p>This Month</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Rank</h4>
+                    <p><strong>Top 15%</strong></p>
+                    <p>Among Peers</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <div class="modal" id="test-interface">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Test Interface</h2>
-        <p>Time: 00:00</p>
-        <button>Pause</button>
-        <button>Previous</button>
-        <button>Next</button>
-        <button>Submit Test</button>
-      </div>
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Test Interface</h2>
+            <p>Loading test interface...</p>
+        </div>
     </div>
-  </main>
 
-  <footer>
-    <a href="#help">Help</a>
-    <a href="#contact">Contact</a>
-    <a href="#privacy">Privacy Policy</a>
-    <p>GitHub Hackathon Credits</p>
-  </footer>
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
 
-  <script src="student.js"></script>
+    <script src="../global.js"></script>
+    <script src="student.js"></script>
 </body>
 </html>
