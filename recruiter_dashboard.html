@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PlacementHub – Recruiter Dashboard</title>
+    <style>
+        body {font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f6f8; color: #333;}
+        header {background: #004080; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;}
+        header .logo {font-weight: bold; font-size: 24px;}
+        header nav a {color: white; margin-left: 20px; text-decoration: none; font-weight: 500;}
+        header nav a:hover {text-decoration: underline;}
+        .nav-right {display: flex; align-items: center;}
+        .nav-right button {background: #dc3545; border: none; color: white; padding: 7px 14px; margin-left: 15px; border-radius: 5px; cursor: pointer;}
+        .welcome-msg {padding: 20px; font-size: 18px;}
+        .cards-container {display: flex; justify-content: space-around; flex-wrap: wrap; margin: 20px;}
+        .stats-card {background: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; margin: 10px; text-align: center; min-width: 160px;}
+        .stats-card h3 {margin: 10px 0; font-size: 22px;}
+        .stats-card p {font-size: 30px; margin: 0;}
+        table {width: 100%; border-collapse: collapse; margin: 20px 0;}
+        th, td {padding: 12px; border-bottom: 1px solid #ddd; text-align: left;}
+        th {background: #004080; color: white;}
+        .action-btn {padding: 5px 10px; margin: 0 2px; border: none; border-radius: 4px; cursor: pointer;}
+        .view, .download {background: #007bff; color: white;}
+        .shortlist {background: #28a745; color: white;}
+        .reject {background: #dc3545; color: white;}
+        .close-job {background: #6c757d; color: white;}
+        .schedule {background: #17a2b8; color: white;}
+        .assign-test {background: #ffc107; color: #333;}
+        .remove {background: #dc3545; color: white;}
+        .form-section {background: white; padding: 15px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        .form-section h2 {color: #004080; margin-bottom: 15px;}
+        label {display: block; margin: 8px 0 4px 0;}
+        input[type=text], input[type=date], select, textarea {width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px;}
+        button {cursor: pointer;}
+        .notifications-panel {background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: 20px;}
+        footer {background: #222; color: #aaa; text-align: center; padding: 15px 10px; font-size: 14px;}
+        footer a {color: #aaa; text-decoration: none; margin: 0 8px;}
+        footer a:hover {text-decoration: underline;}
+        .filters {background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin: 20px 0;}
+        .filters label {margin-right: 10px;}
+        .shortlist-section table, .offers-section table, .applicant-table, .job-table {width: 100%;}
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">PlacementHub</div>
+        <nav class="nav-right">
+            <a href="#dashboard">Dashboard</a>
+            <a href="#post-job">Post Job</a>
+            <a href="#applicants">Applicants</a>
+            <a href="#shortlist">Shortlist</a>
+            <a href="#offers">Offers</a>
+            <button>Logout</button>
+        </nav>
+    </header>
+
+    <section class="welcome-msg">
+        Welcome, [Recruiter Name]. Manage your postings and candidates.
+    </section>
+
+    <section class="cards-container">
+        <div class="stats-card">
+            <h3>Jobs Posted</h3>
+            <p>34</p>
+        </div>
+        <div class="stats-card">
+            <h3>Applicants Received</h3>
+            <p>120</p>
+        </div>
+        <div class="stats-card">
+            <h3>Candidates Shortlisted</h3>
+            <p>27</p>
+        </div>
+        <div class="stats-card">
+            <h3>Offers Made</h3>
+            <p>15</p>
+        </div>
+    </section>
+
+    <section id="job-management">
+        <h2>Job Management</h2>
+        <button style="margin: 10px 0; padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">Post New Job</button>
+        <table class="job-table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Package (LPA)</th>
+                    <th>Status</th>
+                    <th>Deadline</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Software Engineer</td>
+                    <td>12</td>
+                    <td>Open</td>
+                    <td>2025-09-30</td>
+                    <td>
+                        <button class="action-btn view">View Applicants</button>
+                        <button class="action-btn close-job">Close Job</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Data Analyst</td>
+                    <td>9</td>
+                    <td>Closed</td>
+                    <td>2025-08-15</td>
+                    <td>
+                        <button class="action-btn view">View Applicants</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="applicant-pool">
+        <h2>Applicant Pool</h2>
+        <div class="filters">
+            <label for="branch">Branch:</label>
+            <select id="branch" name="branch">
+                <option value="all">All</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="ME">ME</option>
+            </select>
+            <label for="cgpa">CGPA (min):</label>
+            <input type="text" id="cgpa" name="cgpa" placeholder="e.g. 7.5" />
+            <label for="skills">Skills:</label>
+            <input type="text" id="skills" name="skills" placeholder="React, Java, Python" />
+            <button style="padding: 6px 12px; background: #007bff; color: white; border: none; border-radius: 4px;">Filter</button>
+        </div>
+        <table class="applicant-table">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Branch / CGPA</th>
+                    <th>Resume</th>
+                    <th>Application Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>CSE / 8.5</td>
+                    <td>
+                        <button class="action-btn view">View</button>
+                        <button class="action-btn download">Download</button>
+                    </td>
+                    <td>Applied</td>
+                    <td>
+                        <button class="action-btn shortlist">Shortlist</button>
+                        <button class="action-btn reject">Reject</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>ECE / 8.1</td>
+                    <td>
+                        <button class="action-btn view">View</button>
+                        <button class="action-btn download">Download</button>
+                    </td>
+                    <td>Shortlisted</td>
+                    <td>
+                        <button class="action-btn reject">Reject</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="shortlist" class="shortlist-section">
+        <h2>Shortlist Management</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Candidate Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>
+                        <button class="action-btn schedule">Schedule Interview</button>
+                        <button class="action-btn assign-test">Assign Test</button>
+                        <button class="action-btn remove">Remove</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>
+                        <button class="action-btn schedule">Schedule Interview</button>
+                        <button class="action-btn assign-test">Assign Test</button>
+                        <button class="action-btn remove">Remove</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section id="offers" class="offers-section">
+        <h2>Offer Management</h2>
+        <div class="form-section">
+            <h2>Generate Offer Letter</h2>
+            <form>
+                <label for="role">Role:</label>
+                <input type="text" id="role" name="role" placeholder="Job Role" required />
+                <label for="package">Package (LPA):</label>
+                <input type="text" id="package" name="package" placeholder="e.g. 12" required />
+                <label for="joining-date">Joining Date:</label>
+                <input type="date" id="joining-date" name="joining-date" required />
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Additional information..."></textarea>
+                <button type="submit" style="background:#28a745; color:white; padding:10px 20px; border:none; border-radius: 5px; margin-top: 10px;">Send Offer</button>
+            </form>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Candidate Name</th>
+                    <th>Role Offered</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>Software Engineer</td>
+                    <td>Accepted</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>Data Analyst</td>
+                    <td>Pending</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="notifications-panel">
+        <h2>Notifications</h2>
+        <ul>
+            <li>📢 New student applications</li>
+            <li>📑 Interview scheduling reminders</li>
+            <li>📨 Offer acceptance updates</li>
+        </ul>
+    </section>
+
+    <footer>
+        <a href="#">About</a> • <a href="#">Help</a> • <a href="#">Contact</a> • <a href="#">Privacy Policy</a><br />
+        GitHub Hackathon Credits
+    </footer>
+</body>
+</html>
