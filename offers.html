@@ -1,0 +1,168 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementHub - Offers</title>
+    <link rel="stylesheet" href="recruiter.css">
+    <script src="recruiter.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <a href="recruiter_dashboard.html">Dashboard</a>
+            <a href="post_job.html">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="shortlist.html">Shortlist</a>
+            <a href="offers.html" class="active">Offers</a>
+            <a href="index.html">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>PlacementHub – Offers Management</h2>
+        <p>Track and manage offers made to students.</p>
+        <section class="stats">
+            <div class="stat-card">
+                <span>🏆</span>
+                <p>0 Total Offers Made</p>
+            </div>
+            <div class="stat-card">
+                <span>✅</span>
+                <p>0 Accepted Offers</p>
+            </div>
+            <div class="stat-card">
+                <span>❌</span>
+                <p>0 Rejected Offers</p>
+            </div>
+            <div class="stat-card">
+                <span>⏳</span>
+                <p>0 Pending Decisions</p>
+            </div>
+        </section>
+
+        <section>
+            <form>
+                <label for="status">Status:</label>
+                <select id="status">
+                    <option value="all">All Statuses</option>
+                    <option value="accepted">Accepted</option>
+                    <option value="pending">Pending</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+                <label for="sort-by">Sort By:</label>
+                <select id="sort-by">
+                    <option value="package">Highest Package</option>
+                    <option value="latest">Latest Offer</option>
+                    <option value="oldest">Oldest Offer</option>
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+            <button>Generate New Offer</button>
+            <button>Resend Notifications</button>
+            <button>Export Offers Data</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name 👩‍🎓</th>
+                        <th>Branch / CGPA 🎓📊</th>
+                        <th>Job Role 💼</th>
+                        <th>Package 💰</th>
+                        <th>Offer Date 📅</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic content to be populated via JS -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="modal" id="offer-details">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Offer Details</h3>
+                <p><strong>Candidate Name:</strong> <span id="candidate-name"></span></p>
+                <a href="#">View Profile</a>
+                <p><strong>Job Role / Position:</strong> <span id="job-role"></span></p>
+                <p><strong>Package:</strong> <span id="package"></span></p>
+                <p><strong>Joining Date:</strong> <span id="joining-date"></span></p>
+                <p><strong>Offer Letter:</strong> <a href="#">View / Download PDF</a></p>
+                <p><strong>Communication History:</strong> No communication history available.</p>
+            </div>
+        </section>
+
+        <section class="modal" id="generate-offer">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Generate New Offer</h3>
+                <form>
+                    <label for="student">Select Student:</label>
+                    <select id="student">
+                        <option value="">Select a shortlisted candidate</option>
+                    </select>
+                    <p>Please select a student.</p>
+                    <label for="job-role">Job Role / Position:</label>
+                    <input type="text" id="job-role" required>
+                    <p>Job role is required.</p>
+                    <label for="package">Package (CTC / stipend):</label>
+                    <input type="text" id="package" required>
+                    <p>Package is required.</p>
+                    <label for="joining-date">Joining Date:</label>
+                    <input type="date" id="joining-date" required>
+                    <p>Joining date is required and cannot be in the past.</p>
+                    <label for="notes">Additional Notes:</label>
+                    <textarea id="notes"></textarea>
+                    <button type="submit">Generate Offer & Send Notification</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <a href="#help">Help</a> | <a href="#contact">Contact</a> | <a href="#privacy">Privacy Policy</a>
+        <p>GitHub Hackathon Credits</p>
+    </footer>
+</body>
+</html>

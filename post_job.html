@@ -1,0 +1,157 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementHub - Post a Job</title>
+    <link rel="stylesheet" href="recruiter.css">
+    <script src="recruiter.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <a href="recruiter_dashboard.html">Dashboard</a>
+            <a href="post_job.html" class="active">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="shortlist.html">Shortlist</a>
+            <a href="offers.html">Offers</a>
+            <a href="index.html">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>PlacementHub – Post a Job</h2>
+        <p>Create and publish job opportunities for students.</p>
+        <section>
+            <form>
+                <h3>Basic Information</h3>
+                <label for="company-name">Company Name:</label>
+                <input type="text" id="company-name" required>
+                <label for="job-title">Job Title / Role:</label>
+                <input type="text" id="job-title" required>
+                <p>Job title is required.</p>
+                <label for="job-type">Job Type:</label>
+                <select id="job-type" required>
+                    <option value="">-- Select --</option>
+                    <option value="full-time">Full-Time</option>
+                    <option value="internship">Internship</option>
+                    <option value="contract">Contract</option>
+                </select>
+                <p>Job type is required.</p>
+                <label for="salary">Salary / Stipend (LPA or per month):</label>
+                <input type="text" id="salary" placeholder="e.g., 7 LPA or 25000 per month" required>
+                <p>Package must be in the format '7 LPA' or '25000 per month'.</p>
+                <label for="tier">Tier:</label>
+                <select id="tier" required>
+                    <option value="">-- Select --</option>
+                    <option value="tier-1">Tier-1</option>
+                    <option value="tier-2">Tier-2</option>
+                    <option value="tier-3">Tier-3</option>
+                    <option value="internship">Internship</option>
+                </select>
+                <p>Tier is required.</p>
+
+                <h3>Eligibility Criteria</h3>
+                <label for="cgpa">Minimum CGPA:</label>
+                <input type="number" id="cgpa" min="0" max="10" required>
+                <p>CGPA must be between 0 and 10.</p>
+                <label>Allowed Branches:</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="branch" value="cse"> CSE</label>
+                    <label><input type="checkbox" name="branch" value="ece"> ECE</label>
+                    <label><input type="checkbox" name="branch" value="me"> ME</label>
+                    <label><input type="checkbox" name="branch" value="ce"> CE</label>
+                    <label><input type="checkbox" name="branch" value="ee"> EE</label>
+                </div>
+                <p>At least one branch must be selected.</p>
+                <label>Backlogs Allowed:</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="backlogs" value="yes" required> Yes</label>
+                    <label><input type="radio" name="backlogs" value="no"> No</label>
+                </div>
+                <p>Please select if backlogs are allowed.</p>
+                <label for="skills">Skills Required (use comma separated tags):</label>
+                <input type="text" id="skills" placeholder="e.g., Python, Java, SQL">
+
+                <h3>Job Description & Responsibilities</h3>
+                <label for="description">Role Description & Key Responsibilities:</label>
+                <textarea id="description" required></textarea>
+                <p>Job description is required.</p>
+
+                <h3>Important Dates</h3>
+                <label for="deadline">Application Deadline:</label>
+                <input type="date" id="deadline" required>
+                <p>Application deadline is required and cannot be in the past.</p>
+                <label for="test-date">Tentative Test/Interview Date:</label>
+                <input type="date" id="test-date">
+
+                <h3>Attachments (Optional)</h3>
+                <label for="jd-upload">Upload JD (Job Description) PDF:</label>
+                <input type="file" id="jd-upload" accept=".pdf">
+
+                <div class="form-actions">
+                    <button type="button">Preview Job</button>
+                    <button type="submit">Submit for Approval</button>
+                    <button type="button">Save as Draft</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="modal" id="job-preview">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Job Preview</h3>
+                <h4>Job Title Here</h4>
+                <p><strong>Package:</strong> -</p>
+                <p><strong>Eligibility:</strong> -</p>
+                <button>Apply</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <a href="#help">Help</a> | <a href="#contact">Contact</a> | <a href="#privacy">Privacy Policy</a>
+        <p>GitHub Hackathon Credits</p>
+    </footer>
+</body>
+</html>

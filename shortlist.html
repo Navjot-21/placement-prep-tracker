@@ -1,0 +1,186 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlacementHub - Shortlist</title>
+    <link rel="stylesheet" href="recruiter.css">
+    <script src="recruiter.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <a href="recruiter_dashboard.html">Dashboard</a>
+            <a href="post_job.html">Post Job</a>
+            <a href="applicants.html">Applicants</a>
+            <a href="shortlist.html" class="active">Shortlist</a>
+            <a href="offers.html">Offers</a>
+            <a href="index.html">Logout</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>PlacementHub – Shortlisted Candidates</h2>
+        <p>Manage your shortlisted candidates and schedule next steps.</p>
+        <section>
+            <label for="job-posting">Select Job Posting:</label>
+            <select id="job-posting">
+                <option value="">Select a job</option>
+                <option value="software-engineer">Software Engineer – Amazon</option>
+                <option value="intern-infosys">Intern – Infosys</option>
+                <option value="data-analyst">Data Analyst – Google</option>
+            </select>
+            <p>Please select a job posting.</p>
+        </section>
+
+        <section>
+            <form>
+                <label for="branch">Branch:</label>
+                <select id="branch">
+                    <option value="all">All Branches</option>
+                    <option value="cse">CSE</option>
+                    <option value="ece">ECE</option>
+                    <option value="me">ME</option>
+                    <option value="ce">CE</option>
+                    <option value="ee">EE</option>
+                </select>
+                <label for="cgpa-min">CGPA (min):</label>
+                <input type="number" id="cgpa-min" min="0" max="10" placeholder="CGPA must be between 0 and 10">
+                <label for="cgpa-max">CGPA (max):</label>
+                <input type="number" id="cgpa-max" min="0" max="10" placeholder="CGPA must be between 0 and 10">
+                <label for="status">Status:</label>
+                <select id="status">
+                    <option value="all">All Interview Status</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="interview-scheduled">Interview Scheduled</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <label for="sort-by">Sort By:</label>
+                <select id="sort-by">
+                    <option value="cgpa">Highest CGPA</option>
+                    <option value="latest">Latest Shortlisted</option>
+                </select>
+                <button type="submit">Filter</button>
+            </form>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <p>0 Total Shortlisted</p>
+            </div>
+            <div class="stat-card">
+                <p>0 Interviews Scheduled</p>
+            </div>
+            <div class="stat-card">
+                <p>0 Offers Made</p>
+            </div>
+            <div class="stat-card">
+                <p>0 Pending Action</p>
+            </div>
+        </section>
+
+        <section>
+            <button>Schedule Interview for Selected</button>
+            <button>Remove from Shortlist</button>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name 👩‍🎓</th>
+                        <th>Branch & CGPA 🎓📊</th>
+                        <th>Skills</th>
+                        <th>Resume 📄</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic content to be populated via JS -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="modal" id="schedule-interview">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Schedule Interview</h3>
+                <form>
+                    <label for="interview-date">Select Date:</label>
+                    <input type="date" id="interview-date" required>
+                    <p>Date is required and cannot be in the past.</p>
+                    <label for="interview-time">Select Time:</label>
+                    <input type="time" id="interview-time" required>
+                    <p>Time is required.</p>
+                    <label for="mode">Mode:</label>
+                    <select id="mode" required>
+                        <option value="">Select mode</option>
+                        <option value="online">Online</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                    <p>Mode is required.</p>
+                    <label for="venue">Venue / Link:</label>
+                    <input type="text" id="venue" required>
+                    <p>Venue or link is required.</p>
+                    <button type="submit">Notify Student</button>
+                </form>
+            </div>
+        </section>
+
+        <section class="modal" id="add-notes">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>Add Notes</h3>
+                <form>
+                    <label for="notes">Notes / Comments:</label>
+                    <textarea id="notes"></textarea>
+                    <button type="submit">Save Notes</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <a href="#help">Help</a> | <a href="#contact">Contact</a> | <a href="#privacy">Privacy Policy</a>
+        <p>GitHub Hackathon Credits</p>
+    </footer>
+</body>
+</html>
