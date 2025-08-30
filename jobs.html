@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jobs - PlacementHub</title>
+    <title>Jobs Management - PlacementHub</title>
     <link rel="stylesheet" href="../global.css">
-    <link rel="stylesheet" href="student.css">
+    <link rel="stylesheet" href="tpo.css">
 </head>
 <body>
     <header>
         <h1>PlacementHub</h1>
         <nav>
             <ul>
-                <li><a href="student_dashboard.html">Dashboard</a></li>
+                <li><a href="tpo_dashboard.html">Dashboard</a></li>
+                <li><a href="students.html">Students</a></li>
                 <li><a href="jobs.html">Jobs</a></li>
-                <li><a href="resume_builder.html">Resume Builder</a></li>
-                <li><a href="practice_test.html">Practice Tests</a></li>
-                <li><a href="applications.html">Applications</a></li>
-                <li><a href="profile.html">Profile</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
                 <li><a href="../index.html">Logout</a></li>
             </ul>
         </nav>
@@ -25,279 +24,442 @@
 
     <main>
         <section class="hero">
-            <h2>Available Job Opportunities</h2>
-            <p>Browse and apply for job and internship opportunities tailored to your profile</p>
+            <h2>Job Management</h2>
+            <p>Manage job postings, track applications, and coordinate recruitment processes</p>
         </section>
 
-        <section class="stats">
-            <div class="stat-card">
-                <span>📋</span>
-                <h3>45</h3>
-                <p>Total Jobs Available</p>
+        <section class="overview-grid">
+            <div class="overview-card">
+                <span class="overview-icon">📋</span>
+                <div class="overview-value">45</div>
+                <div class="overview-label">Active Job Posts</div>
+                <div class="overview-trend trend-up">+8 this week</div>
             </div>
-            <div class="stat-card">
-                <span>📝</span>
-                <h3>16</h3>
-                <p>Jobs Applied</p>
+            <div class="overview-card">
+                <span class="overview-icon">📝</span>
+                <div class="overview-value">1,234</div>
+                <div class="overview-label">Total Applications</div>
+                <div class="overview-trend">Across all jobs</div>
             </div>
-            <div class="stat-card">
-                <span>✅</span>
-                <h3>5</h3>
-                <p>Shortlisted</p>
+            <div class="overview-card">
+                <span class="overview-icon">🎯</span>
+                <div class="overview-value">27.4</div>
+                <div class="overview-label">Avg Applications/Job</div>
+                <div class="overview-trend trend-up">Good response rate</div>
             </div>
-            <div class="stat-card">
-                <span>⏰</span>
-                <h3>3</h3>
-                <p>Deadlines This Week</p>
+            <div class="overview-card">
+                <span class="overview-icon">⏰</span>
+                <div class="overview-value">12</div>
+                <div class="overview-label">Expiring Soon</div>
+                <div class="overview-trend trend-down">Need attention</div>
             </div>
         </section>
 
         <section class="filters">
-            <select data-filter="domain">
-                <option>All Domains</option>
-                <option>Software Engineering</option>
-                <option>Data Science</option>
-                <option>Product Management</option>
-                <option>Consulting</option>
-                <option>Finance</option>
-                <option>Marketing</option>
+            <select data-filter="company">
+                <option>All Companies</option>
+                <option>TechCorp Solutions</option>
+                <option>DataFlow Analytics</option>
+                <option>Innovation Labs</option>
+                <option>WebTech Systems</option>
+                <option>StartupCo</option>
             </select>
-            <select data-filter="package">
-                <option>All Packages</option>
-                <option>Tier-1 (15+ LPA)</option>
-                <option>Tier-2 (8-15 LPA)</option>
-                <option>Tier-3 (4-8 LPA)</option>
-                <option>Internships</option>
+            <select data-filter="status">
+                <option>All Status</option>
+                <option>Active</option>
+                <option>Draft</option>
+                <option>Expired</option>
+                <option>Cancelled</option>
+                <option>On Hold</option>
             </select>
-            <select data-filter="location">
-                <option>All Locations</option>
-                <option>Remote</option>
-                <option>Bangalore</option>
-                <option>Mumbai</option>
-                <option>Delhi</option>
-                <option>Hyderabad</option>
-                <option>Chennai</option>
+            <select data-filter="job-type">
+                <option>All Job Types</option>
+                <option>Full Time</option>
+                <option>Internship</option>
+                <option>Part Time</option>
+                <option>Contract</option>
+            </select>
+            <select data-filter="branch">
+                <option>All Branches</option>
+                <option>Computer Science</option>
+                <option>Information Technology</option>
+                <option>Electronics</option>
+                <option>Mechanical</option>
+                <option>Civil</option>
+                <option>Electrical</option>
             </select>
             <select data-filter="sort">
-                <option>Latest Jobs</option>
+                <option>Recent Activity</option>
+                <option>Application Deadline</option>
+                <option>Most Applications</option>
                 <option>Highest Package</option>
-                <option>Closing Soon</option>
-                <option>Most Applied</option>
+                <option>Company Name</option>
             </select>
+            <button class="btn primary" data-modal="job-form">+ Create Job Post</button>
         </section>
 
-        <section class="job-grid">
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Software Engineer</h3>
-                        <p class="job-company">TechCorp Solutions</p>
-                    </div>
-                    <span class="status-badge status-applied">Applied</span>
-                </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Package</div>
-                        <div class="job-meta-value">₹12 LPA</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Bangalore</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">0-2 years</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Dec 31, 2024</div>
+        <section class="data-management">
+            <h3>📊 Job Management Tools</h3>
+            <div class="data-import-export">
+                <div class="data-section">
+                    <h4>Bulk Job Operations</h4>
+                    <p>Manage multiple job postings efficiently</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">Bulk Edit</button>
+                        <button class="btn secondary">Export Jobs</button>
                     </div>
                 </div>
-                <p>We are looking for passionate software engineers to join our dynamic team and work on cutting-edge technologies...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary applied" disabled>Applied</button>
+                <div class="data-section">
+                    <h4>Application Analytics</h4>
+                    <p>Analyze application patterns and success rates</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">View Analytics</button>
+                        <button class="btn secondary">Generate Report</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Recruitment Pipeline</h4>
+                    <p>Track hiring progress across all jobs</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">View Pipeline</button>
+                        <button class="btn secondary">Update Status</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Communication Hub</h4>
+                    <p>Manage job-related communications</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">Send Updates</button>
+                        <button class="btn secondary">View Messages</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="company-grid">
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">TC</div>
+                    <div class="company-info">
+                        <h4>Software Developer</h4>
+                        <p>TechCorp Solutions • Full Time</p>
+                        <span class="status-badge status-offer">Active</span>
+                    </div>
+                </div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Package</div>
+                        <div class="company-detail-value">₹12 LPA</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Applications</div>
+                        <div class="company-detail-value">89</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Shortlisted</div>
+                        <div class="company-detail-value">23</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Deadline</div>
+                        <div class="company-detail-value">Dec 18</div>
+                    </div>
+                </div>
+                <div class="job-requirements">
+                    <div class="requirement-tag">React</div>
+                    <div class="requirement-tag">Node.js</div>
+                    <div class="requirement-tag">MongoDB</div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job1')">View Details</button>
+                    <button class="btn secondary" onclick="manageApplications('job1')">Applications</button>
+                    <button class="btn primary" onclick="editJob('job1')">Edit Job</button>
                 </div>
             </div>
 
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Data Scientist</h3>
-                        <p class="job-company">DataFlow Analytics</p>
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">DF</div>
+                    <div class="company-info">
+                        <h4>Data Analyst</h4>
+                        <p>DataFlow Analytics • Full Time</p>
+                        <span class="status-badge status-shortlisted">Active</span>
                     </div>
                 </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Package</div>
-                        <div class="job-meta-value">₹15 LPA</div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Package</div>
+                        <div class="company-detail-value">₹8 LPA</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Mumbai</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Applications</div>
+                        <div class="company-detail-value">34</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">1-3 years</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Shortlisted</div>
+                        <div class="company-detail-value">12</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Jan 15, 2025</div>
-                    </div>
-                </div>
-                <p>Join our data science team to build machine learning models and derive insights from large datasets...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary apply-btn" data-job-id="job-2">Apply Now</button>
-                </div>
-            </div>
-
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Product Manager</h3>
-                        <p class="job-company">Innovation Labs</p>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Deadline</div>
+                        <div class="company-detail-value">Dec 20</div>
                     </div>
                 </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Package</div>
-                        <div class="job-meta-value">₹18 LPA</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Remote</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">2-4 years</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Jan 10, 2025</div>
-                    </div>
+                <div class="job-requirements">
+                    <div class="requirement-tag">Python</div>
+                    <div class="requirement-tag">SQL</div>
+                    <div class="requirement-tag">Tableau</div>
                 </div>
-                <p>Lead product development initiatives and work closely with engineering and design teams...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary apply-btn" data-job-id="job-3">Apply Now</button>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job2')">View Details</button>
+                    <button class="btn secondary" onclick="manageApplications('job2')">Applications</button>
+                    <button class="btn primary" onclick="editJob('job2')">Edit Job</button>
                 </div>
             </div>
 
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Frontend Developer</h3>
-                        <p class="job-company">WebTech Solutions</p>
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">IL</div>
+                    <div class="company-info">
+                        <h4>Frontend Developer</h4>
+                        <p>Innovation Labs • Full Time</p>
+                        <span class="status-badge status-new">New</span>
                     </div>
                 </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Package</div>
-                        <div class="job-meta-value">₹10 LPA</div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Package</div>
+                        <div class="company-detail-value">₹10 LPA</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Hyderabad</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Applications</div>
+                        <div class="company-detail-value">56</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">0-2 years</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Shortlisted</div>
+                        <div class="company-detail-value">18</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Jan 20, 2025</div>
-                    </div>
-                </div>
-                <p>Build responsive and interactive user interfaces using modern frontend technologies...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary apply-btn" data-job-id="job-4">Apply Now</button>
-                </div>
-            </div>
-
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Business Analyst</h3>
-                        <p class="job-company">ConsultPro</p>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Deadline</div>
+                        <div class="company-detail-value">Dec 25</div>
                     </div>
                 </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Package</div>
-                        <div class="job-meta-value">₹8 LPA</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Delhi</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Experience</div>
-                        <div class="job-meta-value">0-1 years</div>
-                    </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Jan 25, 2025</div>
-                    </div>
+                <div class="job-requirements">
+                    <div class="requirement-tag">Vue.js</div>
+                    <div class="requirement-tag">CSS3</div>
+                    <div class="requirement-tag">TypeScript</div>
                 </div>
-                <p>Analyze business processes and requirements to provide data-driven insights and recommendations...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary apply-btn" data-job-id="job-5">Apply Now</button>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job3')">View Details</button>
+                    <button class="btn secondary" onclick="manageApplications('job3')">Applications</button>
+                    <button class="btn primary" onclick="editJob('job3')">Edit Job</button>
                 </div>
             </div>
 
-            <div class="job-card">
-                <div class="job-header">
-                    <div>
-                        <h3 class="job-title">Summer Intern</h3>
-                        <p class="job-company">StartupCo</p>
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">WT</div>
+                    <div class="company-info">
+                        <h4>DevOps Engineer</h4>
+                        <p>WebTech Systems • Full Time</p>
+                        <span class="status-badge status-reviewing">Expiring Soon</span>
                     </div>
                 </div>
-                <div class="job-meta">
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Stipend</div>
-                        <div class="job-meta-value">₹25K/month</div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Package</div>
+                        <div class="company-detail-value">₹15 LPA</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Location</div>
-                        <div class="job-meta-value">Remote</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Applications</div>
+                        <div class="company-detail-value">28</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Duration</div>
-                        <div class="job-meta-value">3 months</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Shortlisted</div>
+                        <div class="company-detail-value">8</div>
                     </div>
-                    <div class="job-meta-item">
-                        <div class="job-meta-label">Deadline</div>
-                        <div class="job-meta-value">Feb 1, 2025</div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Deadline</div>
+                        <div class="company-detail-value">Dec 17</div>
                     </div>
                 </div>
-                <p>Gain hands-on experience in a fast-paced startup environment working on real-world projects...</p>
-                <div class="job-actions">
-                    <button class="btn secondary" data-modal="job-details">View Details</button>
-                    <button class="btn primary apply-btn" data-job-id="job-6">Apply Now</button>
+                <div class="job-requirements">
+                    <div class="requirement-tag">Docker</div>
+                    <div class="requirement-tag">AWS</div>
+                    <div class="requirement-tag">Kubernetes</div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job4')">View Details</button>
+                    <button class="btn secondary" onclick="manageApplications('job4')">Applications</button>
+                    <button class="btn primary" onclick="extendDeadline('job4')">Extend Deadline</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">SC</div>
+                    <div class="company-info">
+                        <h4>Marketing Intern</h4>
+                        <p>StartupCo • Internship</p>
+                        <span class="status-badge status-applied">Active</span>
+                    </div>
+                </div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Stipend</div>
+                        <div class="company-detail-value">₹20K</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Applications</div>
+                        <div class="company-detail-value">67</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Shortlisted</div>
+                        <div class="company-detail-value">15</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Duration</div>
+                        <div class="company-detail-value">6 months</div>
+                    </div>
+                </div>
+                <div class="job-requirements">
+                    <div class="requirement-tag">Digital Marketing</div>
+                    <div class="requirement-tag">Content Writing</div>
+                    <div class="requirement-tag">Analytics</div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job5')">View Details</button>
+                    <button class="btn secondary" onclick="manageApplications('job5')">Applications</button>
+                    <button class="btn primary" onclick="editJob('job5')">Edit Job</button>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">TL</div>
+                    <div class="company-info">
+                        <h4>Quality Assurance</h4>
+                        <p>TechLabs • Full Time</p>
+                        <span class="status-badge status-rejected">Draft</span>
+                    </div>
+                </div>
+                <div class="company-details">
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Package</div>
+                        <div class="company-detail-value">₹7 LPA</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Status</div>
+                        <div class="company-detail-value">Pending</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Created</div>
+                        <div class="company-detail-value">Dec 14</div>
+                    </div>
+                    <div class="company-detail-item">
+                        <div class="company-detail-label">Review</div>
+                        <div class="company-detail-value">Required</div>
+                    </div>
+                </div>
+                <div class="job-requirements">
+                    <div class="requirement-tag">Testing</div>
+                    <div class="requirement-tag">Automation</div>
+                    <div class="requirement-tag">Selenium</div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="job-details" onclick="viewJob('job6')">Review Job</button>
+                    <button class="btn secondary" onclick="editJob('job6')">Edit Details</button>
+                    <button class="btn primary" onclick="publishJob('job6')">Publish Job</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <div class="modal" id="job-details">
+    <!-- Job Details Modal -->
+    <div id="job-details" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Job Details</h2>
-            <p>Loading job details...</p>
+            <div id="job-detail-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
         </div>
     </div>
 
-    <footer>
-        <a href="../help.html">Help</a> •
-        <a href="../contact.html">Contact</a> •
-        <a href="../privacy.html">Privacy Policy</a>
-        <p>Credits: Team Codespark</p>
-    </footer>
+    <!-- Job Form Modal -->
+    <div id="job-form" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create New Job Post</h2>
+            <div class="notification-composer">
+                <div class="notification-form">
+                    <form data-form-type="job-creation">
+                        <div class="form-group">
+                            <label for="job-title">Job Title</label>
+                            <input type="text" id="job-title" name="title" required placeholder="e.g., Software Developer">
+                        </div>
 
-    <script src="../global.js"></script>
-    <script src="student.js"></script>
+                        <div class="form-group">
+                            <label for="company-select">Company</label>
+                            <select id="company-select" name="company" required>
+                                <option value="">Select Company</option>
+                                <option value="techcorp">TechCorp Solutions</option>
+                                <option value="dataflow">DataFlow Analytics</option>
+                                <option value="innovation">Innovation Labs</option>
+                                <option value="webtech">WebTech Systems</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-type">Job Type</label>
+                            <select id="job-type" name="type" required>
+                                <option value="full-time">Full Time</option>
+                                <option value="internship">Internship</option>
+                                <option value="part-time">Part Time</option>
+                                <option value="contract">Contract</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-package">Package/Stipend</label>
+                            <input type="text" id="job-package" name="package" required placeholder="e.g., ₹12 LPA or ₹20K per month">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="eligible-branches">Eligible Branches</label>
+                            <select id="eligible-branches" name="branches" multiple required>
+                                <option value="cs">Computer Science</option>
+                                <option value="it">Information Technology</option>
+                                <option value="ece">Electronics</option>
+                                <option value="me">Mechanical</option>
+                                <option value="ce">Civil</option>
+                                <option value="ee">Electrical</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="application-deadline">Application Deadline</label>
+                            <input type="datetime-local" id="application-deadline" name="deadline" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-description">Job Description</label>
+                            <textarea id="job-description" name="description" required placeholder="Enter detailed job description..." rows="6"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="required-skills">Required Skills (comma separated)</label>
+                            <input type="text" id="required-skills" name="skills" placeholder="e.g., React, Node.js, MongoDB">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn secondary">Save as Draft</button>
+                            <button type="submit" class="btn primary">Publish Job</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="tpo.js"></script>
 </body>
 </html>

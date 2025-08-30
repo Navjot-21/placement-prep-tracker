@@ -1,306 +1,316 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TPO Dashboard - PlacementHub</title>
-  <link rel="stylesheet" href="tpo.css">
-  <script src="tpo.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TPO Dashboard - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="tpo.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <a href="tpo_dashboard.html">Dashboard</a>
-      <a href="manage-jobs.html">Manage Jobs</a>
-      <a href="manage_students.html">Manage Students</a>
-      <a href="reports.html">Reports & Analytics</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="index.html">Logout</a>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="tpo_dashboard.html">Dashboard</a></li>
+                <li><a href="students.html">Students</a></li>
+               
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <div class="container">
-    <h2>Welcome, TPO Name. Manage placements, students, and recruiters.</h2>
-    <div class="dashboard-stats">
-      <div class="stat-card">
-        <h3>Total Students Registered</h3>
-        <p>1234</p>
-      </div>
-      <div class="stat-card">
-        <h3>Jobs Posted</h3>
-        <p>456</p>
-      </div>
-      <div class="stat-card">
-        <h3>Applications Submitted</h3>
-        <p>7890</p>
-      </div>
-      <div class="stat-card">
-        <h3>Students Placed</h3>
-        <p>1024</p>
-      </div>
-      <div class="stat-card">
-        <h3>Placement Percentage</h3>
-        <p>83%</p>
-      </div>
+    <main>
+        <div class="dashboard-welcome">
+            <h2>Welcome to TPO Dashboard</h2>
+            <p>Manage placements, oversee student progress, and coordinate with companies</p>
+        </div>
+
+        <section class="overview-grid">
+            <div class="overview-card">
+                <span class="overview-icon">👨‍🎓</span>
+                <div class="overview-value">450</div>
+                <div class="overview-label">Total Students</div>
+                <div class="overview-trend trend-up">+15 new this semester</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">🏆</span>
+                <div class="overview-value">89</div>
+                <div class="overview-label">Placed Students</div>
+                <div class="overview-trend trend-up">+12 this month</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">🏢</span>
+                <div class="overview-value">23</div>
+                <div class="overview-label">Active Companies</div>
+                <div class="overview-trend trend-up">+3 new partnerships</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📋</span>
+                <div class="overview-value">45</div>
+                <div class="overview-label">Active Job Posts</div>
+                <div class="overview-trend trend-up">+8 this week</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📊</span>
+                <div class="overview-value">19.8%</div>
+                <div class="overview-label">Placement Rate</div>
+                <div class="overview-trend trend-up">Target: 25%</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">💰</span>
+                <div class="overview-value">₹8.5 LPA</div>
+                <div class="overview-label">Average Package</div>
+                <div class="overview-trend trend-up">+₹1.2 LPA vs last year</div>
+            </div>
+        </section>
+
+        <section class="placement-tracker">
+            <h3>Placement Progress Tracker</h3>
+            <div class="placement-summary">
+                <div class="placement-stat">
+                    <h4>361</h4>
+                    <p>Available for Placement</p>
+                </div>
+                <div class="placement-stat">
+                    <h4>234</h4>
+                    <p>Actively Applying</p>
+                </div>
+                <div class="placement-stat">
+                    <h4>156</h4>
+                    <p>Total Applications</p>
+                </div>
+                <div class="placement-stat">
+                    <h4>67</h4>
+                    <p>Interview Scheduled</p>
+                </div>
+                <div class="placement-stat">
+                    <h4>89</h4>
+                    <p>Successfully Placed</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <h3>Recent Activities</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Student/Company</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dec 16, 2024</td>
+                        <td>New Company Registration</td>
+                        <td>Innovation Labs</td>
+                        <td><span class="status-badge status-new">Pending Approval</span></td>
+                        <td><button class="btn secondary">Review</button></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 16, 2024</td>
+                        <td>Job Application</td>
+                        <td>Alice Johnson → TechCorp</td>
+                        <td><span class="status-badge status-shortlisted">Shortlisted</span></td>
+                        <td><button class="btn secondary">View Details</button></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 15, 2024</td>
+                        <td>Interview Completed</td>
+                        <td>Bob Smith → DataFlow</td>
+                        <td><span class="status-badge status-offer">Offer Extended</span></td>
+                        <td><button class="btn secondary">Track Offer</button></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 15, 2024</td>
+                        <td>Student Placement</td>
+                        <td>Carol Davis → WebTech</td>
+                        <td><span class="status-badge status-offer">Placed</span></td>
+                        <td><button class="btn secondary">Update Records</button></td>
+                    </tr>
+                    <tr>
+                        <td>Dec 14, 2024</td>
+                        <td>New Job Posted</td>
+                        <td>TechCorp Solutions</td>
+                        <td><span class="status-badge status-shortlisted">Active</span></td>
+                        <td><button class="btn secondary">Manage Job</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="table-container">
+            <h3>Upcoming Events & Deadlines</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Event</th>
+                        <th>Company/Details</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Dec 17, 2024</strong></td>
+                        <td>Company Pre-placement Talk</td>
+                        <td>Innovation Labs</td>
+                        <td>Presentation</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td><button class="btn secondary">Manage</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dec 18, 2024</strong></td>
+                        <td>Application Deadline</td>
+                        <td>Software Engineer - TechCorp</td>
+                        <td>Deadline</td>
+                        <td><span class="status-badge status-reviewing">2 days left</span></td>
+                        <td><button class="btn secondary">Send Reminder</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dec 20, 2024</strong></td>
+                        <td>Placement Committee Meeting</td>
+                        <td>Monthly Review</td>
+                        <td>Meeting</td>
+                        <td><span class="status-badge status-new">Confirmed</span></td>
+                        <td><button class="btn secondary">View Agenda</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dec 22, 2024</strong></td>
+                        <td>Company Visit</td>
+                        <td>StartupCo</td>
+                        <td>Campus Visit</td>
+                        <td><span class="status-badge status-new">Planned</span></td>
+                        <td><button class="btn secondary">Coordinate</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="report-grid">
+            <div class="report-card" data-report-type="placement-statistics">
+                <span class="report-icon">📊</span>
+                <h3 class="report-title">Placement Statistics</h3>
+                <p class="report-description">Comprehensive placement data, success rates, and trends analysis</p>
+                <div class="report-actions">
+                    <button class="btn primary">Generate Report</button>
+                </div>
+            </div>
+            <div class="report-card" data-report-type="student-performance">
+                <span class="report-icon">🎓</span>
+                <h3 class="report-title">Student Performance</h3>
+                <p class="report-description">Academic performance, skill assessments, and placement readiness</p>
+                <div class="report-actions">
+                    <button class="btn primary">Generate Report</button>
+                </div>
+            </div>
+            <div class="report-card" data-report-type="company-engagement">
+                <span class="report-icon">🏢</span>
+                <h3 class="report-title">Company Engagement</h3>
+                <p class="report-description">Partner company activities, job postings, and recruitment patterns</p>
+                <div class="report-actions">
+                    <button class="btn primary">Generate Report</button>
+                </div>
+            </div>
+            <div class="report-card" data-report-type="salary-analysis">
+                <span class="report-icon">💰</span>
+                <h3 class="report-title">Salary Analysis</h3>
+                <p class="report-description">Package distributions, industry comparisons, and compensation trends</p>
+                <div class="report-actions">
+                    <button class="btn primary">Generate Report</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions">
+                <a href="students.html" class="quick-action">
+                    <span class="icon">👨‍🎓</span>
+                    <h4>Manage Students</h4>
+                    <p>View and update student profiles</p>
+                </a>
+                <a href="companies.html" class="quick-action">
+                    <span class="icon">🏢</span>
+                    <h4>Manage Companies</h4>
+                    <p>Review and approve company registrations</p>
+                </a>
+                <a href="jobs.html" class="quick-action">
+                    <span class="icon">📋</span>
+                    <h4>Job Management</h4>
+                    <p>Oversee job postings and applications</p>
+                </a>
+                <a href="notifications.html" class="quick-action">
+                    <span class="icon">📢</span>
+                    <h4>Send Notifications</h4>
+                    <p>Communicate with students and companies</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>System Health & Alerts</h3>
+            <div class="notification-item">
+                <div class="notification-icon">⚠️</div>
+                <div class="notification-content">
+                    <div class="notification-title">Pending Company Approvals</div>
+                    <div class="notification-text">3 companies waiting for approval - Review required</div>
+                    <div class="notification-time">Action needed</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">📊</div>
+                <div class="notification-content">
+                    <div class="notification-title">Low Application Rate</div>
+                    <div class="notification-text">Software Engineer job has only 12 applications vs target of 50</div>
+                    <div class="notification-time">Consider intervention</div>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">✅</div>
+                <div class="notification-content">
+                    <div class="notification-title">Monthly Target Achieved</div>
+                    <div class="notification-text">December placement target of 15 students achieved</div>
+                    <div class="notification-time">Great progress!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="student-details">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Student Details</h2>
+            <p>Loading student information...</p>
+        </div>
     </div>
 
-    <section>
-      <h3>Department-wise Placements</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-    <section>
-      <h3>Tier-wise Placement Distribution</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-    <section>
-      <h3>Total Placements Over Time</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-
-    <section>
-      <h3>Placement Rules Management</h3>
-      <form>
-        <label>Minimum CGPA</label>
-        <input type="number" name="min-cgpa" step="0.1">
-        <label>Maximum Allowed Backlogs</label>
-        <input type="number" name="max-backlogs">
-        <label>Eligible Departments</label>
-        <div>
-          <input type="checkbox" name="eligible-depts" value="CSE"> CSE
-          <input type="checkbox" name="eligible-depts" value="ECE"> ECE
-          <input type="checkbox" name="eligible-depts" value="ME"> ME
-          <input type="checkbox" name="eligible-depts" value="CE"> CE
+    <div class="modal" id="company-details">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Company Details</h2>
+            <p>Loading company information...</p>
         </div>
-        <label>Maximum Offers Allowed</label>
-        <input type="number" name="max-offers">
-        <label>Allow Tier Downgrade</label>
-        <div>
-          <input type="radio" name="allow-tier-downgrade" value="Yes"> Yes
-          <input type="radio" name="allow-tier-downgrade" value="No"> No
-        </div>
-        <button type="button" class="btn save-rules">Save Rules</button>
-      </form>
-    </section>
+    </div>
 
-    <section>
-      <h3>Job Management</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Company Name</th>
-            <th>Role</th>
-            <th>Package</th>
-            <th>Eligible Depts</th>
-            <th>Schedule</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>ABC Corp</td>
-            <td>Software Engineer</td>
-            <td>12 LPA</td>
-            <td>CSE, ECE</td>
-            <td>2025-09-15</td>
-            <td>Pending Approval</td>
-            <td>
-              <button>Approve</button>
-              <button>Reject</button>
-              <button>View Applicants</button>
-              <button>Edit Schedule</button>
-            </td>
-          </tr>
-          <tr>
-            <td>XYZ Ltd</td>
-            <td>Data Analyst</td>
-            <td>8 LPA</td>
-            <td>CSE, IT</td>
-            <td>2025-09-20</td>
-            <td>Active</td>
-            <td>
-              <button>View Applicants</button>
-              <button>Edit Schedule</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
 
-    <section>
-      <h3>Student Oversight</h3>
-      <div class="filters">
-        <select name="status">
-          <option>All</option>
-          <option>Placed</option>
-          <option>Shortlisted</option>
-          <option>Applied</option>
-        </select>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Student Name</th>
-            <th>Branch</th>
-            <th>CGPA</th>
-            <th>Applications Count</th>
-            <th>Current Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>John Doe</td>
-            <td>CSE</td>
-            <td>8.5</td>
-            <td>5</td>
-            <td>Placed</td>
-            <td>
-              <button>View Profile</button>
-              <button>Remove</button>
-              <button>Send Notice</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Jane Smith</td>
-            <td>ECE</td>
-            <td>8.1</td>
-            <td>3</td>
-            <td>Shortlisted</td>
-            <td>
-              <button>View Profile</button>
-              <button>Remove</button>
-              <button>Send Notice</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h3>Company Oversight</h3>
-      <div class="filters">
-        <select name="company">
-          <option>All Companies</option>
-          <option>ABC Corp</option>
-          <option>XYZ Ltd</option>
-        </select>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Student Name</th>
-            <th>Company</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>John Doe</td>
-            <td>ABC Corp</td>
-            <td>Software Engineer</td>
-            <td>Applied</td>
-            <td><button>View Application</button></td>
-          </tr>
-          <tr>
-            <td>Jane Smith</td>
-            <td>XYZ Ltd</td>
-            <td>Data Analyst</td>
-            <td>Shortlisted</td>
-            <td><button>View Application</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h3>Notifications</h3>
-      <div class="notification">
-        <p>📢 New job posting requests</p>
-        <button>Mark as Read</button>
-      </div>
-      <div class="notification">
-        <p>⏰ Upcoming interviews/tests</p>
-        <button>Mark as Read</button>
-      </div>
-      <div class="notification">
-        <p>⚠ Rule violation: John Doe (Multiple offers)</p>
-        <button>Mark as Read</button>
-      </div>
-    </section>
-
-    <section>
-      <h3>Send Announcement/Notice</h3>
-      <form>
-        <select name="recipient">
-          <option>All Students</option>
-          <option>Specific Student</option>
-          <option>Specific Company</option>
-        </select>
-        <input type="text" name="specific-recipient" placeholder="Specific Recipient Name">
-        <textarea name="message" placeholder="Message"></textarea>
-        <button type="submit" class="btn">Send</button>
-      </form>
-    </section>
-
-    <section>
-      <h3>Reports & Analytics Quick Access</h3>
-      <button>Generate Department Report</button>
-      <button>Generate Company Report</button>
-      <button>Generate Student Placement Report</button>
-      <button>Export as CSV</button>
-      <button>Export as PDF</button>
-    </section>
-  </div>
-
-  <footer>
-    <a href="about.html">About</a> •
-    <a href="help.html">Help</a> •
-    <a href="contact.html">Contact</a> •
-    <a href="privacy.html">Privacy Policy</a>
-    <p>Credits: Team Codespark</p>
-  </footer>
+    <script src="../global.js"></script>
+    <script src="tpo.js"></script>
 </body>
 </html>

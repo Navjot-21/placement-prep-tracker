@@ -1,118 +1,286 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notifications - PlacementHub</title>
-  <link rel="stylesheet" href="tpo.css">
-  <script src="tpo.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="tpo.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <a href="tpo_dashboard.html">Dashboard</a>
-      <a href="manage-jobs.html">Manage Jobs</a>
-      <a href="manage_students.html">Manage Students</a>
-      <a href="reports.html">Reports & Analytics</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="index.html">Logout</a>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="tpo_dashboard.html">Dashboard</a></li>
+                <li><a href="students.html">Students</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <div class="container">
-    <h2>Stay updated with the latest placement alerts and reminders.</h2>
-    <div class="dashboard-stats">
-      <div class="stat-card">
-        <h3>Total Notifications</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Unread Notifications</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Job Alerts</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Test Reminders</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Status Updates</h3>
-        <p>0</p>
-      </div>
+    <main>
+        <section class="hero">
+            <h2>Notification Management</h2>
+            <p>Send notifications to students and companies, manage communication preferences</p>
+        </section>
+
+        <section class="overview-grid">
+            <div class="overview-card">
+                <span class="overview-icon">📨</span>
+                <div class="overview-value">156</div>
+                <div class="overview-label">Sent Today</div>
+                <div class="overview-trend">To students and companies</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📬</span>
+                <div class="overview-value">2,340</div>
+                <div class="overview-label">Total Recipients</div>
+                <div class="overview-trend">450 students + companies</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">✅</span>
+                <div class="overview-value">94.2%</div>
+                <div class="overview-label">Delivery Rate</div>
+                <div class="overview-trend trend-up">Excellent performance</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📊</span>
+                <div class="overview-value">76.8%</div>
+                <div class="overview-label">Read Rate</div>
+                <div class="overview-trend trend-up">Good engagement</div>
+            </div>
+        </section>
+
+        <section class="notification-management">
+            <h3>📢 Compose New Notification</h3>
+            <div class="notification-composer">
+                <div class="notification-form">
+                    <form data-form-type="notification-send">
+                        <div class="form-group">
+                            <label for="notification-type">Notification Type</label>
+                            <select id="notification-type" name="type" required>
+                                <option value="">Select Type</option>
+                                <option value="general">General Announcement</option>
+                                <option value="job-alert">Job Alert</option>
+                                <option value="deadline">Application Deadline</option>
+                                <option value="interview">Interview Schedule</option>
+                                <option value="placement">Placement Update</option>
+                                <option value="event">Event Notification</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notification-priority">Priority Level</label>
+                            <select id="notification-priority" name="priority" required>
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recipient-type">Send To</label>
+                            <select id="recipient-type" name="recipient-type" required>
+                                <option value="">Select Recipients</option>
+                                <option value="all-students">All Students</option>
+                                <option value="final-year">Final Year Students</option>
+                                <option value="placed-students">Placed Students</option>
+                                <option value="active-students">Active Job Seekers</option>
+                                <option value="specific-branch">Specific Branch</option>
+                                <option value="companies">All Companies</option>
+                                <option value="custom">Custom Recipients</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="recipient-input">Add Custom Recipients</label>
+                            <input type="text" id="recipient-input" placeholder="Enter email or name and press Enter">
+                            <div class="recipient-selector"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notification-subject">Subject</label>
+                            <input type="text" id="notification-subject" name="subject" required placeholder="Enter notification subject">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notification-message">Message</label>
+                            <textarea id="notification-message" name="message" required placeholder="Enter your message here..." rows="6"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" name="schedule-later"> Schedule for later
+                            </label>
+                            <input type="datetime-local" name="schedule-time" style="margin-left: 1rem;">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn secondary">Save Draft</button>
+                            <button type="submit" class="btn primary">Send Notification</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="notification-preview">
+                    <h4>Preview</h4>
+                    <div class="preview-notification">
+                        <div class="preview-header">
+                            <div class="preview-priority">Normal Priority</div>
+                            <div class="preview-type">General Announcement</div>
+                        </div>
+                        <div class="preview-subject">Subject will appear here</div>
+                        <div class="preview-message">Message preview will appear here...</div>
+                        <div class="preview-footer">
+                            <div>Recipients: Not selected</div>
+                            <div>Send time: Now</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-management">
+            <h3>📋 Quick Notification Templates</h3>
+            <div class="data-import-export">
+                <div class="data-section">
+                    <h4>Job Application Reminder</h4>
+                    <p>Remind students about upcoming application deadlines</p>
+                    <div class="data-actions">
+                        <button class="btn secondary" onclick="loadTemplate('job-reminder')">Use Template</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Interview Schedule</h4>
+                    <p>Notify students about interview dates and times</p>
+                    <div class="data-actions">
+                        <button class="btn secondary" onclick="loadTemplate('interview-schedule')">Use Template</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Placement Congratulations</h4>
+                    <p>Celebrate student achievements and placements</p>
+                    <div class="data-actions">
+                        <button class="btn secondary" onclick="loadTemplate('placement-congrats')">Use Template</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Event Announcement</h4>
+                    <p>Announce placement-related events and sessions</p>
+                    <div class="data-actions">
+                        <button class="btn secondary" onclick="loadTemplate('event-announcement')">Use Template</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <h3>Recent Notifications</h3>
+            <div class="filters">
+                <select data-filter="type">
+                    <option>All Types</option>
+                    <option>General Announcement</option>
+                    <option>Job Alert</option>
+                    <option>Application Deadline</option>
+                    <option>Interview Schedule</option>
+                    <option>Placement Update</option>
+                    <option>Event Notification</option>
+                </select>
+                <select data-filter="status">
+                    <option>All Status</option>
+                    <option>Sent</option>
+                    <option>Scheduled</option>
+                    <option>Draft</option>
+                    <option>Failed</option>
+                </select>
+                <select data-filter="priority">
+                    <option>All Priorities</option>
+                    <option>Normal</option>
+                    <option>High</option>
+                    <option>Urgent</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date/Time</th>
+                        <th>Subject</th>
+                        <th>Type</th>
+                        <th>Recipients</th>
+                        <th>Status</th>
+                        <th>Read Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dec 16, 2024 2:30 PM</td>
+                        <td>Software Engineer Position - TechCorp</td>
+                        <td>Job Alert</td>
+                        <td>234 CS Students</td>
+                        <td><span class="status-badge status-offer">Sent</span></td>
+                        <td>78%</td>
+                        <td>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Resend</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 16, 2024 10:00 AM</td>
+                        <td>Application Deadline Reminder</td>
+                        <td>Deadline</td>
+                        <td>156 Active Students</td>
+                        <td><span class="status-badge status-offer">Sent</span></td>
+                        <td>92%</td>
+                        <td>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Analytics</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 15, 2024 4:45 PM</td>
+                        <td>Interview Schedule - DataFlow Analytics</td>
+                        <td>Interview</td>
+                        <td>23 Shortlisted Students</td>
+                        <td><span class="status-badge status-offer">Sent</span></td>
+                        <td>100%</td>
+                        <td>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Follow-up</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 17, 2024 9:00 AM</td>
+                        <td>Placement Drive - Innovation Labs</td>
+                        <td>Event</td>
+                        <td>All Final Year</td>
+                        <td><span class="status-badge status-new">Scheduled</span></td>
+                        <td>-</td>
+                        <td>
+                            <button class="btn secondary">Edit</button>
+                            <button class="btn secondary">Cancel</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Modal for notification details -->
+    <div id="notification-details" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Notification Details</h2>
+            <div id="notification-detail-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
     </div>
 
-    <div class="filters">
-      <button>All</button>
-      <button>Unread</button>
-      <button>Job Alerts</button>
-      <button>Tests</button>
-      <button>Status Updates</button>
-    </div>
-
-    <div>
-      <button>Mark All as Read</button>
-      <button>Delete Selected</button>
-      <button>Download Log (CSV/PDF)</button>
-    </div>
-
-    <section>
-      <h3>Notification Details</h3>
-      <div class="notification">
-        <p>Sample Notification</p>
-        <button>Mark as Read</button>
-        <button>Open Related Page</button>
-      </div>
-    </section>
-  </div>
-
-  <footer>
-    <a href="help.html">Help</a> |
-    <a href="contact.html">Contact</a> |
-    <a href="privacy.html">Privacy Policy</a>
-    <p>GitHub Hackathon Credits</p>
-  </footer>
+    <script src="tpo.js"></script>
 </body>
 </html>

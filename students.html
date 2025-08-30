@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="tpo.css">
+</head>
+<body>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="tpo_dashboard.html">Dashboard</a></li>
+                <li><a href="students.html">Students</a></li>
+                
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>Student Management</h2>
+            <p>Manage student profiles, track placement progress, and oversee applications</p>
+        </section>
+
+        <section class="overview-grid">
+            <div class="overview-card">
+                <span class="overview-icon">👨‍🎓</span>
+                <div class="overview-value">450</div>
+                <div class="overview-label">Total Students</div>
+                <div class="overview-trend">Final year eligible students</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">🏆</span>
+                <div class="overview-value">89</div>
+                <div class="overview-label">Placed Students</div>
+                <div class="overview-trend trend-up">19.8% placement rate</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📝</span>
+                <div class="overview-value">234</div>
+                <div class="overview-label">Actively Applying</div>
+                <div class="overview-trend">52% of eligible students</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">⚠️</span>
+                <div class="overview-value">127</div>
+                <div class="overview-label">Not Participating</div>
+                <div class="overview-trend trend-down">Need intervention</div>
+            </div>
+        </section>
+
+        <section class="filters">
+            <select data-filter="branch">
+                <option>All Branches</option>
+                <option>Computer Science</option>
+                <option>Information Technology</option>
+                <option>Electronics</option>
+                <option>Mechanical</option>
+                <option>Civil</option>
+                <option>Electrical</option>
+            </select>
+            <select data-filter="status">
+                <option>All Status</option>
+                <option>Placed</option>
+                <option>Active</option>
+                <option>Inactive</option>
+                <option>Not Participating</option>
+            </select>
+            <select data-filter="cgpa">
+                <option>All CGPA</option>
+                <option>9.0 and above</option>
+                <option>8.0 - 8.9</option>
+                <option>7.0 - 7.9</option>
+                <option>6.0 - 6.9</option>
+                <option>Below 6.0</option>
+            </select>
+            <select data-filter="sort">
+                <option>Recent Activity</option>
+                <option>Name A-Z</option>
+                <option>CGPA High to Low</option>
+                <option>Applications Count</option>
+                <option>Roll Number</option>
+            </select>
+            <button class="btn primary">+ Add Student</button>
+        </section>
+
+        <section class="data-management">
+            <h3>📊 Bulk Student Data Management</h3>
+            <div class="data-import-export">
+                <div class="data-section">
+                    <h4>Import Student Data</h4>
+                    <p>Upload Excel/CSV files with student information</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">📁 Upload File</button>
+                        <button class="btn secondary">📥 Download Template</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Export Student Data</h4>
+                    <p>Download student data in various formats</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">📊 Export to Excel</button>
+                        <button class="btn secondary">📄 Export to PDF</button>
+                        <button class="btn secondary">📋 Generate Report</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="student-grid">
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">AJ</div>
+                    <div class="student-info">
+                        <h4>Alice Johnson</h4>
+                        <p>2021CS123 • Computer Science</p>
+                        <span class="status-badge status-offer">Placed</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">8.5</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">12</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Offers</div>
+                        <div class="student-meta-value">2</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Package</div>
+                        <div class="student-meta-value">₹12 LPA</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Edit Details</button>
+                    <button class="btn primary">Manage Apps</button>
+                </div>
+            </div>
+
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">BS</div>
+                    <div class="student-info">
+                        <h4>Bob Smith</h4>
+                        <p>2021IT456 • Information Technology</p>
+                        <span class="status-badge status-shortlisted">Active</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">8.2</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">8</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Shortlisted</div>
+                        <div class="student-meta-value">3</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Interviews</div>
+                        <div class="student-meta-value">2</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Edit Details</button>
+                    <button class="btn primary">Track Progress</button>
+                </div>
+            </div>
+
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">CD</div>
+                    <div class="student-info">
+                        <h4>Carol Davis</h4>
+                        <p>2021ECE789 • Electronics</p>
+                        <span class="status-badge status-interview">Active</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">9.1</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">15</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Shortlisted</div>
+                        <div class="student-meta-value">6</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Interviews</div>
+                        <div class="student-meta-value">4</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Edit Details</button>
+                    <button class="btn primary">Schedule Support</button>
+                </div>
+            </div>
+
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">DW</div>
+                    <div class="student-info">
+                        <h4>David Wilson</h4>
+                        <p>2021ME234 • Mechanical</p>
+                        <span class="status-badge status-applied">Active</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">7.8</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">5</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Shortlisted</div>
+                        <div class="student-meta-value">1</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Status</div>
+                        <div class="student-meta-value">Applying</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Edit Details</button>
+                    <button class="btn primary">Provide Guidance</button>
+                </div>
+            </div>
+
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">EB</div>
+                    <div class="student-info">
+                        <h4>Emily Brown</h4>
+                        <p>2021CE567 • Civil Engineering</p>
+                        <span class="status-badge status-rejected">Inactive</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">6.8</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">2</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Last Activity</div>
+                        <div class="student-meta-value">15 days ago</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Status</div>
+                        <div class="student-meta-value">Not Active</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Send Reminder</button>
+                    <button class="btn primary">Motivate</button>
+                </div>
+            </div>
+
+            <div class="student-card">
+                <div class="student-header">
+                    <div class="student-avatar">FG</div>
+                    <div class="student-info">
+                        <h4>Frank Garcia</h4>
+                        <p>2021EE890 • Electrical</p>
+                        <span class="status-badge status-applied">Active</span>
+                    </div>
+                </div>
+                <div class="student-meta">
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">CGPA</div>
+                        <div class="student-meta-value">8.7</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Applications</div>
+                        <div class="student-meta-value">10</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Shortlisted</div>
+                        <div class="student-meta-value">4</div>
+                    </div>
+                    <div class="student-meta-item">
+                        <div class="student-meta-label">Interviews</div>
+                        <div class="student-meta-value">3</div>
+                    </div>
+                </div>
+                <div class="student-actions">
+                    <button class="btn secondary" data-modal="student-details">View Profile</button>
+                    <button class="btn secondary">Edit Details</button>
+                    <button class="btn primary">Track Progress</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <h3>Detailed Student List</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>CGPA</th>
+                        <th>Applications</th>
+                        <th>Status</th>
+                        <th>Last Activity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>2021CS123</strong></td>
+                        <td>
+                            <div>
+                                <strong>Alice Johnson</strong><br>
+                                <small>alice.johnson@college.edu</small>
+                            </div>
+                        </td>
+                        <td>Computer Science</td>
+                        <td><strong>8.5</strong></td>
+                        <td>12 (2 offers)</td>
+                        <td><span class="status-badge status-offer">Placed</span></td>
+                        <td>2 hours ago</td>
+                        <td><button class="btn secondary">Manage</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2021IT456</strong></td>
+                        <td>
+                            <div>
+                                <strong>Bob Smith</strong><br>
+                                <small>bob.smith@college.edu</small>
+                            </div>
+                        </td>
+                        <td>Information Technology</td>
+                        <td><strong>8.2</strong></td>
+                        <td>8 (3 shortlisted)</td>
+                        <td><span class="status-badge status-shortlisted">Active</span></td>
+                        <td>1 day ago</td>
+                        <td><button class="btn secondary">Manage</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2021ECE789</strong></td>
+                        <td>
+                            <div>
+                                <strong>Carol Davis</strong><br>
+                                <small>carol.davis@college.edu</small>
+                            </div>
+                        </td>
+                        <td>Electronics</td>
+                        <td><strong>9.1</strong></td>
+                        <td>15 (6 shortlisted)</td>
+                        <td><span class="status-badge status-interview">Active</span></td>
+                        <td>3 hours ago</td>
+                        <td><button class="btn secondary">Manage</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2021ME234</strong></td>
+                        <td>
+                            <div>
+                                <strong>David Wilson</strong><br>
+                                <small>david.wilson@college.edu</small>
+                            </div>
+                        </td>
+                        <td>Mechanical</td>
+                        <td><strong>7.8</strong></td>
+                        <td>5 (1 shortlisted)</td>
+                        <td><span class="status-badge status-applied">Active</span></td>
+                        <td>2 days ago</td>
+                        <td><button class="btn secondary">Manage</button></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2021CE567</strong></td>
+                        <td>
+                            <div>
+                                <strong>Emily Brown</strong><br>
+                                <small>emily.brown@college.edu</small>
+                            </div>
+                        </td>
+                        <td>Civil Engineering</td>
+                        <td><strong>6.8</strong></td>
+                        <td>2 (0 shortlisted)</td>
+                        <td><span class="status-badge status-rejected">Inactive</span></td>
+                        <td>15 days ago</td>
+                        <td><button class="btn secondary">Motivate</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="feature-card">
+            <h3>Bulk Actions</h3>
+            <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+                <button class="btn secondary">Select All Active Students</button>
+                <button class="btn secondary">Send Bulk Notification</button>
+                <button class="btn secondary">Export Selected Data</button>
+                <button class="btn secondary">Schedule Group Session</button>
+                <button class="btn secondary">Generate Progress Report</button>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Student Analytics</h3>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <span class="overview-icon">📊</span>
+                    <div class="overview-value">7.8</div>
+                    <div class="overview-label">Average CGPA</div>
+                    <div class="overview-trend">All eligible students</div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">📝</span>
+                    <div class="overview-value">6.2</div>
+                    <div class="overview-label">Avg Applications per Student</div>
+                    <div class="overview-trend">Active students only</div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">🎯</span>
+                    <div class="overview-value">23%</div>
+                    <div class="overview-label">Success Rate</div>
+                    <div class="overview-trend">Applications to placement</div>
+                </div>
+                <div class="overview-card">
+                    <span class="overview-icon">⏱️</span>
+                    <div class="overview-value">45 days</div>
+                    <div class="overview-label">Avg Time to Placement</div>
+                    <div class="overview-trend">From first application</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="student-details">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Student Profile</h2>
+            <p>Loading student details...</p>
+        </div>
+    </div>
+
+    <footer>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
+    </footer>
+
+    <script src="../global.js"></script>
+    <script src="tpo.js"></script>
+</body>
+</html>

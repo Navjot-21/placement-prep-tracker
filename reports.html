@@ -1,174 +1,346 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reports & Analytics - PlacementHub</title>
-  <link rel="stylesheet" href="tpo.css">
-  <script src="tpo.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="tpo.css">
 </head>
 <body>
-  <header>
-    <h1>PlacementHub</h1>
-    <nav>
-      <a href="tpo_dashboard.html">Dashboard</a>
-      <a href="manage-jobs.html">Manage Jobs</a>
-      <a href="manage_students.html">Manage Students</a>
-      <a href="reports.html">Reports & Analytics</a>
-      <a href="notifications.html">Notifications</a>
-      <a href="index.html">Logout</a>
-    </nav>
-  </header>
+    <header>
+        <h1>PlacementHub</h1>
+        <nav>
+            <ul>
+                <li><a href="tpo_dashboard.html">Dashboard</a></li>
+                <li><a href="students.html">Students</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  <div class="container">
-    <h2>Analyze placement data, generate insights, and export reports.</h2>
-    <div class="dashboard-stats">
-      <div class="stat-card">
-        <h3>Total Students Registered</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Students Placed</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Companies Participated</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Total Job Applications</h3>
-        <p>0</p>
-      </div>
-      <div class="stat-card">
-        <h3>Placement %</h3>
-        <p>0%</p>
-      </div>
+    <main>
+        <section class="hero">
+            <h2>Reports & Analytics</h2>
+            <p>Generate comprehensive reports and analyze placement data for insights</p>
+        </section>
+
+        <section class="overview-grid">
+            <div class="overview-card">
+                <span class="overview-icon">📊</span>
+                <div class="overview-value">15</div>
+                <div class="overview-label">Reports Generated</div>
+                <div class="overview-trend">This month</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">📈</span>
+                <div class="overview-value">89.4%</div>
+                <div class="overview-label">Data Accuracy</div>
+                <div class="overview-trend trend-up">Excellent quality</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">⏱️</span>
+                <div class="overview-value">2.3s</div>
+                <div class="overview-label">Avg Generation Time</div>
+                <div class="overview-trend">Fast processing</div>
+            </div>
+            <div class="overview-card">
+                <span class="overview-icon">💾</span>
+                <div class="overview-value">234</div>
+                <div class="overview-label">Downloads</div>
+                <div class="overview-trend">This semester</div>
+            </div>
+        </section>
+
+        <section class="report-grid">
+            <div class="report-card" data-report-type="placement-statistics">
+                <span class="report-icon">📊</span>
+                <h3 class="report-title">Placement Statistics</h3>
+                <p class="report-description">Comprehensive placement data, success rates, branch-wise analysis, and year-over-year trends</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('placement-statistics')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('placement-statistics')">Quick Generate</button>
+                </div>
+            </div>
+
+            <div class="report-card" data-report-type="student-performance">
+                <span class="report-icon">🎓</span>
+                <h3 class="report-title">Student Performance Analysis</h3>
+                <p class="report-description">Academic performance correlation with placement success, skill assessments, and readiness metrics</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('student-performance')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('student-performance')">Quick Generate</button>
+                </div>
+            </div>
+
+            <div class="report-card" data-report-type="company-engagement">
+                <span class="report-icon">🏢</span>
+                <h3 class="report-title">Company Engagement Report</h3>
+                <p class="report-description">Partner company activities, hiring patterns, job posting trends, and recruitment effectiveness</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('company-engagement')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('company-engagement')">Quick Generate</button>
+                </div>
+            </div>
+
+            <div class="report-card" data-report-type="salary-analysis">
+                <span class="report-icon">💰</span>
+                <h3 class="report-title">Salary & Package Analysis</h3>
+                <p class="report-description">Package distributions, industry comparisons, location-wise analysis, and compensation trends</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('salary-analysis')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('salary-analysis')">Quick Generate</button>
+                </div>
+            </div>
+
+            <div class="report-card" data-report-type="application-tracking">
+                <span class="report-icon">📋</span>
+                <h3 class="report-title">Application Tracking Report</h3>
+                <p class="report-description">Application conversion rates, interview success rates, and recruitment funnel analysis</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('application-tracking')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('application-tracking')">Quick Generate</button>
+                </div>
+            </div>
+
+            <div class="report-card" data-report-type="monthly-summary">
+                <span class="report-icon">📅</span>
+                <h3 class="report-title">Monthly Summary Report</h3>
+                <p class="report-description">Monthly placement activities, key metrics, achievements, and progress towards targets</p>
+                <div class="report-actions">
+                    <button class="btn secondary" data-modal="report-generator" onclick="openReportModal('monthly-summary')">Configure</button>
+                    <button class="btn primary" onclick="generateQuickReport('monthly-summary')">Quick Generate</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="data-management">
+            <h3>📈 Advanced Analytics Dashboard</h3>
+            <div class="data-import-export">
+                <div class="data-section">
+                    <h4>Trend Analysis</h4>
+                    <p>Analyze placement trends over time periods</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">View Trends</button>
+                        <button class="btn secondary">Compare Years</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Predictive Analytics</h4>
+                    <p>Forecast placement outcomes and identify at-risk students</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">Run Prediction</button>
+                        <button class="btn secondary">View Models</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Custom Dashboards</h4>
+                    <p>Create personalized analytical views</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">Create Dashboard</button>
+                        <button class="btn secondary">View Saved</button>
+                    </div>
+                </div>
+                <div class="data-section">
+                    <h4>Data Export</h4>
+                    <p>Export data for external analysis tools</p>
+                    <div class="data-actions">
+                        <button class="btn secondary">Export CSV</button>
+                        <button class="btn secondary">API Access</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="table-container">
+            <h3>Recent Reports</h3>
+            <div class="filters">
+                <select data-filter="report-type">
+                    <option>All Report Types</option>
+                    <option>Placement Statistics</option>
+                    <option>Student Performance</option>
+                    <option>Company Engagement</option>
+                    <option>Salary Analysis</option>
+                    <option>Application Tracking</option>
+                    <option>Monthly Summary</option>
+                </select>
+                <select data-filter="date-range">
+                    <option>Last 30 Days</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 3 Months</option>
+                    <option>This Semester</option>
+                    <option>This Year</option>
+                </select>
+                <select data-filter="format">
+                    <option>All Formats</option>
+                    <option>PDF</option>
+                    <option>Excel</option>
+                    <option>CSV</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Generated</th>
+                        <th>Report Name</th>
+                        <th>Type</th>
+                        <th>Period</th>
+                        <th>Format</th>
+                        <th>Size</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dec 16, 2024 3:15 PM</td>
+                        <td>December Placement Summary</td>
+                        <td>Monthly Summary</td>
+                        <td>Dec 1-15, 2024</td>
+                        <td>PDF</td>
+                        <td>2.3 MB</td>
+                        <td>
+                            <button class="btn secondary">Download</button>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Share</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 15, 2024 11:30 AM</td>
+                        <td>CS Branch Placement Analysis</td>
+                        <td>Student Performance</td>
+                        <td>2024 Academic Year</td>
+                        <td>Excel</td>
+                        <td>1.8 MB</td>
+                        <td>
+                            <button class="btn secondary">Download</button>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Regenerate</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 14, 2024 4:45 PM</td>
+                        <td>Company Hiring Patterns Q4</td>
+                        <td>Company Engagement</td>
+                        <td>Oct-Dec 2024</td>
+                        <td>PDF</td>
+                        <td>3.1 MB</td>
+                        <td>
+                            <button class="btn secondary">Download</button>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Archive</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Dec 13, 2024 2:20 PM</td>
+                        <td>Salary Distribution Report</td>
+                        <td>Salary Analysis</td>
+                        <td>2024 Placements</td>
+                        <td>Excel</td>
+                        <td>1.2 MB</td>
+                        <td>
+                            <button class="btn secondary">Download</button>
+                            <button class="btn secondary">View</button>
+                            <button class="btn secondary">Update</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Report Generator Modal -->
+    <div id="report-generator" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Generate Custom Report</h2>
+            <div class="notification-composer">
+                <div class="notification-form">
+                    <form data-form-type="report-generation">
+                        <div class="form-group">
+                            <label for="report-title">Report Title</label>
+                            <input type="text" id="report-title" name="title" required placeholder="Enter custom report title">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="report-period">Time Period</label>
+                            <select id="report-period" name="period" required>
+                                <option value="">Select Period</option>
+                                <option value="current-month">Current Month</option>
+                                <option value="last-month">Last Month</option>
+                                <option value="current-semester">Current Semester</option>
+                                <option value="last-semester">Last Semester</option>
+                                <option value="academic-year">Academic Year</option>
+                                <option value="custom">Custom Date Range</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="report-format">Output Format</label>
+                            <select id="report-format" name="format" required>
+                                <option value="pdf">PDF Document</option>
+                                <option value="excel">Excel Spreadsheet</option>
+                                <option value="csv">CSV Data File</option>
+                                <option value="powerpoint">PowerPoint Presentation</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Include Sections</label>
+                            <div class="checkbox-group">
+                                <label><input type="checkbox" name="sections" value="executive-summary" checked> Executive Summary</label>
+                                <label><input type="checkbox" name="sections" value="statistics" checked> Key Statistics</label>
+                                <label><input type="checkbox" name="sections" value="charts" checked> Charts & Graphs</label>
+                                <label><input type="checkbox" name="sections" value="trends"> Trend Analysis</label>
+                                <label><input type="checkbox" name="sections" value="recommendations"> Recommendations</label>
+                                <label><input type="checkbox" name="sections" value="appendix"> Data Appendix</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="report-filters">Filter Options</label>
+                            <select id="report-filters" name="filters" multiple>
+                                <option value="all-branches">All Branches</option>
+                                <option value="computer-science">Computer Science</option>
+                                <option value="information-technology">Information Technology</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="mechanical">Mechanical</option>
+                                <option value="civil">Civil</option>
+                                <option value="electrical">Electrical</option>
+                            </select>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn secondary">Save Template</button>
+                            <button type="submit" class="btn primary">Generate Report</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="notification-preview">
+                    <h4>Report Preview</h4>
+                    <div class="preview-notification">
+                        <div class="preview-header">
+                            <div class="preview-priority">Report Configuration</div>
+                        </div>
+                        <div class="preview-subject">Title: Custom Report</div>
+                        <div class="preview-message">
+                            <strong>Period:</strong> Not selected<br>
+                            <strong>Format:</strong> PDF<br>
+                            <strong>Sections:</strong> Executive Summary, Statistics, Charts<br>
+                            <strong>Filters:</strong> All Branches
+                        </div>
+                        <div class="preview-footer">
+                            <div>Estimated generation time: 15-30 seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <section>
-      <h3>Department-Wise Placements</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-    <section>
-      <h3>Tier-Wise Package Distribution</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-    <section>
-      <h3>Placement Progress Over Time</h3>
-      <div class="chart-placeholder">[Chart Placeholder]</div>
-    </section>
-
-    <section>
-      <h3>Company-wise Outcomes</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Company</th>
-            <th>No. of Applicants</th>
-            <th>Shortlisted</th>
-            <th>Selected</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Table data will be dynamically populated -->
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h3>Report Generation</h3>
-      <select name="report-type">
-        <option>Select</option>
-        <option>Department 📚</option>
-        <option>Company 🏢</option>
-        <option>Year of Passing 🎓</option>
-        <option>Tier/Package 💰</option>
-      </select>
-      <button>CSV</button>
-      <button>PDF</button>
-      <button>Excel</button>
-      <button>Generate Report</button>
-      <button>Download Report</button>
-    </section>
-
-    <section>
-      <h3>Placement History Logs</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Student Name</th>
-            <th>Company</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Table data will be dynamically populated -->
-        </tbody>
-      </table>
-    </section>
-
-    <section>
-      <h3>Notifications</h3>
-      <div class="notification">
-        <p>Report generated successfully</p>
-        <button>Mark as Read</button>
-      </div>
-      <div class="notification">
-        <p>New company added: FutureTech</p>
-        <button>Mark as Read</button>
-      </div>
-      <div class="notification">
-        <p>Job posting updated: Senior Developer at XYZ Ltd</p>
-        <button>Mark as Read</button>
-      </div>
-    </section>
-  </div>
-
-  <footer>
-    <a href="help.html">Help</a> |
-    <a href="contact.html">Contact</a> |
-    <a href="privacy.html">Privacy Policy</a>
-    <p>GitHub Hackathon Credits</p>
-  </footer>
+    <script src="tpo.js"></script>
 </body>
 </html>
