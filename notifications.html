@@ -42,7 +42,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Jobs - PlacementHub</title>
+  <title>Notifications - PlacementHub</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js"></script>
 </head>
@@ -60,91 +60,52 @@
   </header>
 
   <div class="container">
-    <h2>Job Management Dashboard</h2>
-    <p>Review, approve, and manage all company job postings with advanced analytics and real-time updates</p>
-
+    <h2>Stay updated with the latest placement alerts and reminders.</h2>
     <div class="dashboard-stats">
       <div class="stat-card">
-        <h3>Total Jobs Posted</h3>
-        <p>520</p>
+        <h3>Total Notifications</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Jobs Pending Approval</h3>
-        <p>34</p>
+        <h3>Unread Notifications</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Active Jobs</h3>
-        <p>350</p>
+        <h3>Job Alerts</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Closed Jobs</h3>
-        <p>136</p>
+        <h3>Test Reminders</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Status Updates</h3>
+        <p>0</p>
       </div>
     </div>
 
     <div class="filters">
-      <input type="text" placeholder="Search Jobs">
-      <select name="tier">
-        <option>All Tiers</option>
-        <option>Tier-1</option>
-        <option>Tier-2</option>
-        <option>Tier-3</option>
-      </select>
-      <select name="status">
-        <option>All Status</option>
-        <option>Pending Approval</option>
-        <option>Approved</option>
-        <option>Rejected</option>
-        <option>Closed</option>
-      </select>
-      <select name="branch">
-        <option>All Branches</option>
-        <option>Computer Science</option>
-        <option>Electronics & Communication</option>
-        <option>Mechanical Engineering</option>
-        <option>Electrical Engineering</option>
-      </select>
-      <select name="sort">
-        <option>Deadline (Soonest First)</option>
-        <option>Package (Highest First)</option>
-        <option>Latest Posted</option>
-        <option>Most Applications</option>
-      </select>
-      <button>Apply Filters</button>
+      <button>All</button>
+      <button>Unread</button>
+      <button>Job Alerts</button>
+      <button>Tests</button>
+      <button>Status Updates</button>
     </div>
 
     <div>
-      <p>0 jobs selected</p>
-      <button>Approve Selected</button>
-      <button>Export Data</button>
+      <button>Mark All as Read</button>
+      <button>Delete Selected</button>
+      <button>Download Log (CSV/PDF)</button>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Company Name</th>
-          <th>Job Title</th>
-          <th>Package (LPA)</th>
-          <th>Tier</th>
-          <th>Deadline</th>
-          <th>Status</th>
-          <th>Applications</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>ABC Technologies</td>
-          <td>Software Engineer</td>
-          <td>₹12.0</td>
-          <td>Tier-1</td>
-          <td>2025-09-15</td>
-          <td>Pending</td>
-          <td>45</td>
-          <td><button>View</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <section>
+      <h3>Notification Details</h3>
+      <div class="notification">
+        <p>Sample Notification</p>
+        <button>Mark as Read</button>
+        <button>Open Related Page</button>
+      </div>
+    </section>
   </div>
 
   <footer>

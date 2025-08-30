@@ -42,7 +42,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Manage Jobs - PlacementHub</title>
+  <title>Reports & Analytics - PlacementHub</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js"></script>
 </head>
@@ -60,91 +60,108 @@
   </header>
 
   <div class="container">
-    <h2>Job Management Dashboard</h2>
-    <p>Review, approve, and manage all company job postings with advanced analytics and real-time updates</p>
-
+    <h2>Analyze placement data, generate insights, and export reports.</h2>
     <div class="dashboard-stats">
       <div class="stat-card">
-        <h3>Total Jobs Posted</h3>
-        <p>520</p>
+        <h3>Total Students Registered</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Jobs Pending Approval</h3>
-        <p>34</p>
+        <h3>Students Placed</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Active Jobs</h3>
-        <p>350</p>
+        <h3>Companies Participated</h3>
+        <p>0</p>
       </div>
       <div class="stat-card">
-        <h3>Closed Jobs</h3>
-        <p>136</p>
+        <h3>Total Job Applications</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Placement %</h3>
+        <p>0%</p>
       </div>
     </div>
 
-    <div class="filters">
-      <input type="text" placeholder="Search Jobs">
-      <select name="tier">
-        <option>All Tiers</option>
-        <option>Tier-1</option>
-        <option>Tier-2</option>
-        <option>Tier-3</option>
-      </select>
-      <select name="status">
-        <option>All Status</option>
-        <option>Pending Approval</option>
-        <option>Approved</option>
-        <option>Rejected</option>
-        <option>Closed</option>
-      </select>
-      <select name="branch">
-        <option>All Branches</option>
-        <option>Computer Science</option>
-        <option>Electronics & Communication</option>
-        <option>Mechanical Engineering</option>
-        <option>Electrical Engineering</option>
-      </select>
-      <select name="sort">
-        <option>Deadline (Soonest First)</option>
-        <option>Package (Highest First)</option>
-        <option>Latest Posted</option>
-        <option>Most Applications</option>
-      </select>
-      <button>Apply Filters</button>
-    </div>
+    <section>
+      <h3>Department-Wise Placements</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
+    </section>
+    <section>
+      <h3>Tier-Wise Package Distribution</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
+    </section>
+    <section>
+      <h3>Placement Progress Over Time</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
+    </section>
 
-    <div>
-      <p>0 jobs selected</p>
-      <button>Approve Selected</button>
-      <button>Export Data</button>
-    </div>
+    <section>
+      <h3>Company-wise Outcomes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>No. of Applicants</th>
+            <th>Shortlisted</th>
+            <th>Selected</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table data will be dynamically populated -->
+        </tbody>
+      </table>
+    </section>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Company Name</th>
-          <th>Job Title</th>
-          <th>Package (LPA)</th>
-          <th>Tier</th>
-          <th>Deadline</th>
-          <th>Status</th>
-          <th>Applications</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>ABC Technologies</td>
-          <td>Software Engineer</td>
-          <td>₹12.0</td>
-          <td>Tier-1</td>
-          <td>2025-09-15</td>
-          <td>Pending</td>
-          <td>45</td>
-          <td><button>View</button></td>
-        </tr>
-      </tbody>
-    </table>
+    <section>
+      <h3>Report Generation</h3>
+      <select name="report-type">
+        <option>Select</option>
+        <option>Department 📚</option>
+        <option>Company 🏢</option>
+        <option>Year of Passing 🎓</option>
+        <option>Tier/Package 💰</option>
+      </select>
+      <button>CSV</button>
+      <button>PDF</button>
+      <button>Excel</button>
+      <button>Generate Report</button>
+      <button>Download Report</button>
+    </section>
+
+    <section>
+      <h3>Placement History Logs</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Student Name</th>
+            <th>Company</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Table data will be dynamically populated -->
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h3>Notifications</h3>
+      <div class="notification">
+        <p>Report generated successfully</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>New company added: FutureTech</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>Job posting updated: Senior Developer at XYZ Ltd</p>
+        <button>Mark as Read</button>
+      </div>
+    </section>
   </div>
 
   <footer>

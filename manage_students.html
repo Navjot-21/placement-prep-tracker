@@ -1,652 +1,170 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>PlacementHub – Manage Students</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    background: #f4f6f8;
-    color: #333;
-  }
-  header {
-    background: #004080;
-    color: white;
-    padding: 10px 20px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  header .logo {
-    font-weight: bold;
-    font-size: 24px;
-  }
-  header nav a {
-    color: white;
-    margin-left: 20px;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  header nav a:hover, header nav a:focus {
-    text-decoration: underline;
-    outline: none;
-  }
-  .nav-right {
-    display: flex;
-    align-items: center;
-  }
-  .nav-right button {
-    background: #dc3545;
-    border: none;
-    color: white;
-    padding: 7px 14px;
-    margin-left: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .nav-right button:hover, .nav-right button:focus {
-    background: #c82333;
-    outline: none;
-  }
-  .welcome-msg {
-    padding: 20px;
-    font-size: 18px;
-    text-align: center;
-    background: white;
-    margin: 10px 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  .cards-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin: 20px;
-  }
-  .stats-card {
-    background: white;
-    padding: 15px 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    flex: 1;
-    margin: 10px;
-    text-align: center;
-    min-width: 140px;
-  }
-  .stats-card h3 {
-    margin: 10px 0;
-    font-size: 22px;
-  }
-  .stats-card p {
-    font-size: 26px;
-    margin: 0;
-  }
-  .filters {
-    background: white;
-    padding: 15px;
-    margin: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-  }
-  .filters input[type="text"],
-  .filters select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    min-width: 150px;
-    font-size: 14px;
-  }
-  .filters input[type="text"]:focus,
-  .filters select:focus {
-    border-color: #007bff;
-    outline: none;
-  }
-  .filters label {
-    font-weight: 600;
-    margin-right: 8px;
-  }
-  .filters button {
-    padding: 8px 15px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .filters button:hover, .filters button:focus {
-    background: #0056b3;
-    outline: none;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-  }
-  th {
-    background: #004080;
-    color: white;
-    user-select: none;
-  }
-  td.actions button {
-    margin-right: 5px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  button.view-profile {
-    background: #007bff;
-    color: white;
-  }
-  button.view-profile:hover, button.view-profile:focus {
-    background: #0056b3;
-  }
-  button.remove {
-    background: #dc3545;
-    color: white;
-  }
-  button.remove:hover, button.remove:focus {
-    background: #c82333;
-  }
-  button.send-notice {
-    background: #ffc107;
-    color: #333;
-  }
-  button.send-notice:hover, button.send-notice:focus {
-    background: #e0a800;
-  }
-  .bulk-actions {
-    background: white;
-    margin: 20px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: right;
-  }
-  .bulk-actions button {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: background 0.2s;
-  }
-  .bulk-actions button:hover, .bulk-actions button:focus {
-    background: #0056b3;
-    outline: none;
-  }
-  .side-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 360px;
-    height: 100%;
-    background: white;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-    padding: 20px;
-    overflow-y: auto;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    z-index: 1000;
-  }
-  .side-panel.open {
-    transform: translateX(0);
-  }
-  .side-panel h3 {
-    margin-top: 0;
-    color: #004080;
-  }
-  .side-panel button.close-panel {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 7px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    float: right;
-    transition: background 0.2s;
-  }
-  .side-panel button.close-panel:hover, .side-panel button.close-panel:focus {
-    background: #c82333;
-  }
-  .skill-tag {
-    display: inline-block;
-    background-color: #e0e0e0;
-    color: #333;
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 13px;
-    margin: 0 5px 5px 0;
-  }
-  .applications-timeline {
-    font-size: 14px;
-    color: #555;
-    margin-top: 12px;
-    line-height: 1.5;
-  }
-  .notifications-sidebar {
-    position: fixed;
-    top: 60px;
-    right: -300px;
-    width: 280px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    padding: 15px;
-    font-size: 14px;
-    z-index: 999;
-    transition: right 0.3s ease;
-  }
-  .notifications-sidebar.open {
-    right: 10px;
-  }
-  .notifications-sidebar h4 {
-    margin-top: 0;
-    color: #004080;
-  }
-  .notifications-sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  .notifications-sidebar li {
-    margin-bottom: 10px;
-  }
-  footer {
-    background: #222;
-    color: #aaa;
-    text-align: center;
-    padding: 15px 10px;
-    font-size: 14px;
-    margin-top: 50px;
-  }
-  footer a {
-    color: #aaa;
-    text-decoration: none;
-    margin: 0 8px;
-  }
-  footer a:hover, footer a:focus {
-    text-decoration: underline;
-    outline: none;
-  }
-  @media (max-width: 768px) {
-    .filters {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .filters input, .filters select {
-      width: 100%;
-      min-width: unset;
-    }
-    .side-panel {
-      width: 100%;
-    }
-    .notifications-sidebar {
-      width: 90%;
-    }
-  }
-</style>
-<script>
-  // Sample student data
-  const students = [
-    { id: 1, name: "John Doe", roll: "1801CS01", email: "john.doe@example.com", branch: "CSE", year: "3rd Year", cgpa: 8.5, skills: ["Java", "Python", "React"], applications: 5, status: "Shortlisted", timeline: "Applied → Test → Shortlisted" },
-    { id: 2, name: "Jane Smith", roll: "1801EC04", email: "jane.smith@example.com", branch: "ECE", year: "4th Year", cgpa: 9.1, skills: ["C++", "Machine Learning"], applications: 3, status: "Placed", timeline: "Applied → Test → Interview → Placed" },
-    { id: 3, name: "Alice Johnson", roll: "1801ME02", email: "alice.j@example.com", branch: "ME", year: "2nd Year", cgpa: 7.8, skills: ["Python", "MATLAB"], applications: 2, status: "Not Placed", timeline: "Applied" },
-    { id: 4, name: "Bob Brown", roll: "1801CS05", email: "bob.brown@example.com", branch: "CSE", year: "4th Year", cgpa: 8.9, skills: ["JavaScript", "Node.js"], applications: 4, status: "Interview", timeline: "Applied → Test → Interview" }
-  ];
-
-  // Stats calculation
-  function updateStats() {
-    const totalStudents = students.length;
-    const activeApplicants = students.filter(s => s.applications > 0).length;
-    const shortlisted = students.filter(s => s.status === "Shortlisted").length;
-    const placed = students.filter(s => s.status === "Placed").length;
-    const placementPercentage = totalStudents ? ((placed / totalStudents) * 100).toFixed(0) + "%" : "0%";
-
-    document.querySelectorAll(".stats-card p")[0].textContent = totalStudents;
-    document.querySelectorAll(".stats-card p")[1].textContent = activeApplicants;
-    document.querySelectorAll(".stats-card p")[2].textContent = shortlisted;
-    document.querySelectorAll(".stats-card p")[3].textContent = placed;
-    document.querySelectorAll(".stats-card p")[4].textContent = placementPercentage;
-  }
-
-  // Render table
-  function renderTable(data) {
-    const tbody = document.querySelector("tbody");
-    tbody.innerHTML = "";
-    data.forEach(student => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td><input type="checkbox" aria-label="Select ${student.name}" data-id="${student.id}"></td>
-        <td>${student.name}</td>
-        <td>${student.roll} / ${student.email}</td>
-        <td>${student.branch} - ${student.year}</td>
-        <td>${student.cgpa}</td>
-        <td>${student.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join("")}</td>
-        <td>${student.applications}</td>
-        <td>${student.status}</td>
-        <td class="actions">
-          <button class="view-profile" data-id="${student.id}" aria-label="View profile of ${student.name}">View Profile 🔍</button>
-          <button class="remove" data-id="${student.id}" aria-label="Remove ${student.name}">Remove ❌</button>
-          <button class="send-notice" data-id="${student.id}" aria-label="Send notice to ${student.name}">Send Notice 📢</button>
-        </td>
-      `;
-      tbody.appendChild(row);
-    });
-
-    // Add event listeners for action buttons
-    document.querySelectorAll(".view-profile").forEach(btn => {
-      btn.addEventListener("click", () => openProfilePanel(btn.dataset.id));
-    });
-    document.querySelectorAll(".remove").forEach(btn => {
-      btn.addEventListener("click", () => removeStudent(btn.dataset.id));
-    });
-    document.querySelectorAll(".send-notice").forEach(btn => {
-      btn.addEventListener("click", () => sendNotice(btn.dataset.id));
-    });
-  }
-
-  // Filter and sort table
-  function applyFilters() {
-    const search = document.querySelector(".filters input[type='text']").value.toLowerCase();
-    const branch = document.getElementById("filterBranch").value;
-    const year = document.getElementById("filterYear").value;
-    const cgpa = document.getElementById("filterCGPA").value;
-    const status = document.getElementById("statusFilter").value;
-    const sort = document.getElementById("sortOption").value;
-
-    let filtered = students.filter(student => {
-      const matchesSearch = student.name.toLowerCase().includes(search) || 
-                           student.roll.toLowerCase().includes(search) || 
-                           student.email.toLower Russ: (search);
-      const matchesBranch = branch === "all" || student.branch === branch;
-      const matchesYear = year === "all" || student.year === year;
-      const matchesCGPA = cgpa === "all" || (
-        cgpa === "7-8" && student.cgpa >= 7 && student.cgpa < 8 ||
-        cgpa === "8-9" && student.cgpa >= 8 && student.cgpa < 9 ||
-        cgpa === "9-10" && student.cgpa >= 9
-      );
-      const matchesStatus = status === "all" || student.status === status;
-      return matchesSearch && matchesBranch && matchesYear && matchesCGPA && matchesStatus;
-    });
-
-    if (sort === "highest-cgpa") {
-      filtered.sort((a, b) => b.cgpa - a.cgpa);
-    } else if (sort === "most-applications") {
-      filtered.sort((a, b) => b.applications - a.applications);
-    } else if (sort === "recently-placed") {
-      filtered.sort((a, b) => a.status === "Placed" ? -1 : 1);
-    }
-
-    renderTable(filtered);
-  }
-
-  // Open side panel with student data
-  function openProfilePanel(studentId) {
-    const student = students.find(s => s.id == studentId);
-    if (!student) return;
-
-    const panel = document.getElementById("studentProfilePanel");
-    panel.innerHTML = `
-      <button class="close-panel" onclick="closeProfilePanel()" aria-label="Close profile panel">Close</button>
-      <h3>${student.name}</h3>
-      <p><strong>Email:</strong> ${student.email}</p>
-      <p><strong>Branch:</strong> ${student.branch}</p>
-      <p><strong>Year:</strong> ${student.year}</p>
-      <p><strong>CGPA:</strong> ${student.cgpa}</p>
-      <h4>Skills</h4>
-      <div>${student.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join("")}</div>
-      <h4>Resume</h4>
-      <a href="#" download>Download Resume 📄</a>
-      <h4>Applications Timeline</h4>
-      <div class="applications-timeline">${student.timeline}</div>
-    `;
-    panel.classList.add("open");
-    panel.setAttribute("aria-hidden", "false");
-  }
-
-  // Close side panel
-  function closeProfilePanel() {
-    const panel = document.getElementById("studentProfilePanel");
-    panel.classList.remove("open");
-    panel.setAttribute("aria-hidden", "true");
-  }
-
-  // Toggle notifications sidebar
-  function toggleNotifications() {
-    const sidebar = document.querySelector(".notifications-sidebar");
-    sidebar.classList.toggle("open");
-  }
-
-  // Remove student (simulated)
-  function removeStudent(studentId) {
-    if (confirm("Remove student? This action cannot be undone.")) {
-      const index = students.findIndex(s => s.id == studentId);
-      if (index !== -1) {
-        students.splice(index, 1);
-        updateStats();
-        applyFilters();
-        alert("Student removed successfully.");
-      }
-    }
-  }
-
-  // Send notice (simulated)
-  function sendNotice(studentId) {
-    const student = students.find(s => s.id == studentId);
-    alert(`Notice sent to ${student.name}.`);
-  }
-
-  // Export data (simulated)
-  function exportData() {
-    alert("Exporting student data as CSV...");
-    // Simulate CSV generation
-    const csv = students.map(s => `${s.name},${s.roll},${s.email},${s.branch},${s.year},${s.cgpa},${s.skills.join(";")},${s.applications},${s.status}`).join("\n");
-    const blob = new Blob([`Name,Roll,Email,Branch,Year,CGPA,Skills,Applications,Status\n${csv}`], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "students.csv";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  // Bulk message (simulated)
-  function bulkMessage() {
-    const selected = Array.from(document.querySelectorAll("tbody input[type='checkbox']:checked")).map(cb => cb.dataset.id);
-    if (selected.length === 0) {
-      alert("Please select at least one student.");
-      return;
-    }
-    alert(`Sending notice to ${selected.length} selected students...`);
-  }
-
-  // Bulk remove (simulated)
-  function bulkRemove() {
-    const selected = Array.from(document.querySelectorAll("tbody input[type='checkbox']:checked")).map(cb => cb.dataset.id);
-    if (selected.length === 0) {
-      alert("Please select at least one student.");
-      return;
-    }
-    if (confirm(`Remove ${selected.length} students? This action cannot be undone.`)) {
-      selected.forEach(id => {
-        const index = students.findIndex(s => s.id == id);
-        if (index !== -1) students.splice(index, 1);
-      });
-      updateStats();
-      applyFilters();
-      alert("Selected students removed successfully.");
-    }
-  }
-
-  // Logout
-  function logout() {
-    if (confirm("Are you sure you want to logout?")) {
-      alert("Logging out...");
-      // Redirect or clear session logic here
-    }
-  }
-
-  // Initialize
-  document.addEventListener("DOMContentLoaded", () => {
-    updateStats();
-    renderTable(students);
-    document.querySelector(".filters button").addEventListener("click", applyFilters);
-    document.getElementById("filterBranch").addEventListener("change", applyFilters);
-    document.getElementById("filterYear").addEventListener("change", applyFilters);
-    document.getElementById("filterCGPA").addEventListener("change", applyFilters);
-    document.getElementById("statusFilter").addEventListener("change", applyFilters);
-    document.getElementById("sortOption").addEventListener("change", applyFilters);
-    document.querySelector(".filters input[type='text']").addEventListener("input", applyFilters);
-    document.querySelector(".bulk-actions button:nth-child(1)").addEventListener("click", exportData);
-    document.querySelector(".bulk-actions button:nth-child(2)").addEventListener("click", bulkMessage);
-    document.querySelector(".bulk-actions button:nth-child(3)").addEventListener("click", bulkRemove);
-    document.querySelector(".nav-right button").addEventListener("click", logout);
-    document.querySelector("a[href='#notifications']").addEventListener("click", (e) => {
-      e.preventDefault();
-      toggleNotifications();
-    });
-    // Select all checkbox
-    document.querySelector("th input[type='checkbox']").addEventListener("change", (e) => {
-      document.querySelectorAll("tbody input[type='checkbox']").forEach(cb => {
-        cb.checked = e.target.checked;
-      });
-    });
-  });
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students - PlacementHub</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js"></script>
 </head>
 <body>
-<header>
-  <div class="logo">PlacementHub</div>
-  <nav class="nav-right">
-    <a href="#dashboard" aria-label="Go to Dashboard">Dashboard</a>
-    <a href="#manage-jobs" aria-label="Manage Jobs">Manage Jobs</a>
-    <a href="#manage-students" aria-label="Manage Students">Manage Students</a>
-    <a href="#reports" aria-label="View Reports and Analytics">Reports & Analytics</a>
-    <a href="#notifications" aria-label="View Notifications">Notifications</a>
-    <button aria-label="Logout">Logout</button>
-  </nav>
-</header>
-<section class="welcome-msg">
-  Monitor student applications, placements, and enforce rules.
-</section>
-<section class="cards-container">
-  <div class="stats-card">
-    <h3>Total Students Registered 👥</h3>
-    <p>0</p>
+  <header>
+    <h1>PlacementHub</h1>
+    <nav>
+      <a href="tpo_dashboard.html">Dashboard</a>
+      <a href="manage-jobs.html">Manage Jobs</a>
+      <a href="manage_students.html">Manage Students</a>
+      <a href="reports.html">Reports & Analytics</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Monitor student applications, placements, and enforce rules.</h2>
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <h3>Total Students Registered 👥</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Active Applicants 📝</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Students Shortlisted 🎯</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Students Placed 🏆</h3>
+        <p>0</p>
+      </div>
+      <div class="stat-card">
+        <h3>Placement % 📊</h3>
+        <p>0%</p>
+      </div>
+    </div>
+
+    <div class="filters">
+      <select name="branch">
+        <option>All</option>
+        <option>CSE</option>
+        <option>ECE</option>
+        <option>ME</option>
+      </select>
+      <select name="year">
+        <option>All</option>
+        <option>1st Year</option>
+        <option>2nd Year</option>
+        <option>3rd Year</option>
+        <option>4th Year</option>
+      </select>
+      <select name="cgpa">
+        <option>All</option>
+        <option>7.0 - 8.0</option>
+        <option>8.0 - 9.0</option>
+        <option>9.0 - 10.0</option>
+      </select>
+      <select name="status">
+        <option>All</option>
+        <option>Not Placed</option>
+        <option>Shortlisted</option>
+        <option>Placed</option>
+        <option>Interview</option>
+      </select>
+      <select name="sort">
+        <option>Highest CGPA</option>
+        <option>Most Applications</option>
+        <option>Recently Placed</option>
+      </select>
+      <button>Apply Filters</button>
+    </div>
+
+    <div>
+      <button>Export Student Data (CSV/Excel)</button>
+      <button>Bulk Message / Send Notice</button>
+      <button>Remove From Drive</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Student Name 👩‍🎓</th>
+          <th>Roll Number / Email</th>
+          <th>Branch & Year 🎓</th>
+          <th>CGPA 📊</th>
+          <th>Skills</th>
+          <th>Applications Count 📝</th>
+          <th>Current Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Table data will be dynamically populated -->
+      </tbody>
+    </table>
+
+    <section>
+      <h3>Notifications</h3>
+      <div class="notification">
+        <p>Eligibility issue: Student 1801CS10 below CGPA threshold</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>Multiple offers conflict alert for student 1802ME15</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>Student 1801EC05 crossed CGPA threshold</p>
+        <button>Mark as Read</button>
+      </div>
+    </section>
   </div>
-  <div class="stats-card">
-    <h3>Active Applicants 📝</h3>
-    <p>0</p>
-  </div>
-  <div class="stats-card">
-    <h3>Students Shortlisted 🎯</h3>
-    <p>0</p>
-  </div>
-  <div class="stats-card">
-    <h3>Students Placed 🏆</h3>
-    <p>0</p>
-  </div>
-  <div class="stats-card">
-    <h3>Placement % 📊</h3>
-    <p>0%</p>
-  </div>
-</section>
-<section class="filters">
-  <input type="text" placeholder="Search by Name, Roll Number, Email" aria-label="Search students" />
-  <label for="filterBranch">Branch:</label>
-  <select id="filterBranch" aria-label="Filter by Branch">
-    <option value="all">All</option>
-    <option value="CSE">CSE</option>
-    <option value="ECE">ECE</option>
-    <option value="ME">ME</option>
-  </select>
-  <label for="filterYear">Year:</label>
-  <select id="filterYear" aria-label="Filter by Year">
-    <option value="all">All</option>
-    <option value="1st Year">1st Year</option>
-    <option value="2nd Year">2nd Year</option>
-    <option value="3rd Year">3rd Year</option>
-    <option value="4th Year">4th Year</option>
-  </select>
-  <label for="filterCGPA">CGPA Range:</label>
-  <select id="filterCGPA" aria-label="Filter by CGPA Range">
-    <option value="all">All</option>
-    <option value="7-8">7.0 - 8.0</option>
-    <option value="8-9">8.0 - 9.0</option>
-    <option value="9-10">9.0 - 10.0</option>
-  </select>
-  <label for="statusFilter">Status:</label>
-  <select id="statusFilter" aria-label="Filter by Status">
-    <option value="all">All</option>
-    <option value="Not Placed">Not Placed</option>
-    <option value="Shortlisted">Shortlisted</option>
-    <option value="Placed">Placed</option>
-    <option value="Interview">Interview</option>
-  </select>
-  <label for="sortOption">Sort by:</label>
-  <select id="sortOption" aria-label="Sort table">
-    <option value="highest-cgpa">Highest CGPA</option>
-    <option value="most-applications">Most Applications</option>
-    <option value="recently-placed">Recently Placed</option>
-  </select>
-  <button aria-label="Apply Filters">Apply Filters</button>
-</section>
-<section class="bulk-actions">
-  <button aria-label="Export Student Data">Export Student Data (CSV/Excel)</button>
-  <button aria-label="Send Bulk Message">Bulk Message / Send Notice</button>
-  <button aria-label="Remove Selected Students">Remove From Drive</button>
-</section>
-<section>
-  <table aria-label="Student Data Table">
-    <thead>
-      <tr>
-        <th><input type="checkbox" aria-label="Select all students" /></th>
-        <th>Student Name 👩‍🎓</th>
-        <th>Roll Number / Email</th>
-        <th>Branch & Year 🎓</th>
-        <th>CGPA 📊</th>
-        <th>Skills</th>
-        <th>Applications Count 📝</th>
-        <th>Current Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
-<aside id="studentProfilePanel" class="side-panel" aria-label="Student Profile Panel" aria-hidden="true">
-</aside>
-<div class="notifications-sidebar" aria-label="Notifications" aria-hidden="true">
-  <h4>Notifications</h4>
-  <ul>
-    <li>Eligibility issue: Student 1801CS10 below CGPA threshold</li>
-    <li>Multiple offers conflict alert for student 1802ME15</li>
-    <li>Student 1801EC05 crossed CGPA threshold</li>
-  </ul>
-</div>
-<footer>
-  <a href="#" aria-label="Help">Help</a> | 
-  <a href="#" aria-label="Contact">Contact</a> | 
-  <a href="#" aria-label="Privacy Policy">Privacy Policy</a><br />
-  GitHub Hackathon Credits
-</footer>
+
+  <footer>
+    <a href="help.html">Help</a> |
+    <a href="contact.html">Contact</a> |
+    <a href="privacy.html">Privacy Policy</a>
+    <p>GitHub Hackathon Credits</p>
+  </footer>
 </body>
 </html>

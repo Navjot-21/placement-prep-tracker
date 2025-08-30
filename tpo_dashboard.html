@@ -1,837 +1,306 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PlacementHub TPO Dashboard: Manage job postings, student oversight, placement rules, and analytics." />
-    <meta name="keywords" content="placement, TPO, dashboard, jobs, students, analytics, rules" />
-    <meta name="author" content="Team Codespark" />
-    <title>PlacementHub – TPO Dashboard</title>
-    <link rel="icon" type="image/png" href="https://via.placeholder.com/32?text=PH" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #f4f6f8;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        a {
-            color: #004080;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        a:hover {
-            color: #002d5c;
-            text-decoration: underline;
-        }
-        header {
-            background: linear-gradient(90deg, #004080, #007bff);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        header .logo {
-            font-weight: 700;
-            font-size: 1.6rem;
-            letter-spacing: 1.5px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        header .logo:hover {
-            transform: scale(1.05);
-        }
-        header .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        header nav a {
-            color: white;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: color 0.3s ease;
-        }
-        header nav a:hover {
-            color: #00c6fb;
-            text-decoration: none;
-        }
-        .nav-right button {
-            background: #dc3545;
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .nav-right button:hover {
-            background: #b02631;
-            transform: translateY(-2px);
-        }
-        .welcome-msg {
-            padding: 1.5rem 2rem;
-            font-size: 1.2rem;
-            color: #004080;
-            font-weight: 600;
-            background: #fff;
-            margin: 1rem 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .cards-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin: 2rem;
-            gap: 1.5rem;
-        }
-        .stats-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-            flex: 1;
-            margin: 0.5rem;
-            text-align: center;
-            min-width: 180px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        .stats-card h3 {
-            margin: 0.5rem 0;
-            font-size: 1.3rem;
-            color: #004080;
-        }
-        .stats-card p {
-            font-size: 1.8rem;
-            margin: 0;
-            color: #2a9d8f;
-            font-weight: 700;
-        }
-        .charts-container {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            margin: 2rem;
-            gap: 1.5rem;
-        }
-        .chart {
-            background: white;
-            flex: 1;
-            margin: 0.5rem;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-            min-width: 280px;
-            text-align: center;
-        }
-        h2.section-title {
-            color: #004080;
-            margin-bottom: 1rem;
-            font-size: 1.4rem;
-            font-weight: 700;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-            overflow: hidden;
-        }
-        th, td {
-            padding: 0.8rem;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-        th {
-            background: #004080;
-            color: white;
-            font-weight: 700;
-        }
-        .action-btn {
-            padding: 0.5rem 1rem;
-            margin: 0 0.2rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
-        .approve { background: #28a745; color: white; }
-        .reject { background: #dc3545; color: white; }
-        .view { background: #007bff; color: white; }
-        .remove { background: #dc3545; color: white; }
-        .send-notice { background: #ffc107; color: #333; }
-        .edit-schedule { background: #17a2b8; color: white; }
-        .approve:hover { background: #218838; }
-        .reject:hover, .remove:hover { background: #b02631; }
-        .view:hover { background: #0056b3; }
-        .send-notice:hover { background: #e0a800; }
-        .edit-schedule:hover { background: #138496; }
-        .notifications, .reports, .rules-management, .communication, .company-oversight {
-            background: white;
-            padding: 1.5rem;
-            margin: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
-            transition: transform 0.3s ease;
-        }
-        .notifications:hover, .reports:hover, .rules-management:hover, .communication:hover, .company-oversight:hover {
-            transform: translateY(-5px);
-        }
-        .notifications ul {
-            padding-left: 1.5rem;
-            margin: 0;
-        }
-        .notifications li {
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #ddd;
-            transition: background-color 0.3s ease;
-        }
-        .notifications li:last-child {
-            border-bottom: none;
-        }
-        .notifications li:hover {
-            background: #f4f7fa;
-        }
-        .reports button, .communication button {
-            background: #007bff;
-            color: white;
-            padding: 0.7rem 1.4rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 0.5rem;
-            font-weight: 600;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .reports button:hover, .communication button:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-        }
-        .rules-management form, .communication form {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        .rules-management label, .communication label {
-            font-weight: 600;
-            color: #333;
-        }
-        .rules-management input, .rules-management select, .communication input, .communication textarea {
-            padding: 0.7rem;
-            border: 1px solid #c3cad2;
-            border-radius: 4px;
-            font-size: 1rem;
-            width: 100%;
-            max-width: 500px;
-        }
-        .rules-management input:focus, .rules-management select:focus, .communication input:focus, .communication textarea:focus {
-            outline: none;
-            border-color: #004080;
-            box-shadow: 0 0 0 2px rgba(0,64,128,0.2);
-        }
-        .communication textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        footer {
-            background: linear-gradient(90deg, #004080, #007bff);
-            color: #fff;
-            text-align: center;
-            padding: 1.5rem;
-            font-size: 0.9rem;
-            margin-top: auto;
-        }
-        footer a {
-            color: #fff;
-            margin: 0 0.8rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        footer a:hover {
-            color: #00c6fb;
-            text-decoration: none;
-        }
-        .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-        }
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #004080;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @media (max-width: 960px) {
-            .cards-container, .charts-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .stats-card, .chart {
-                min-width: 100%;
-                max-width: 400px;
-            }
-        }
-        @media (max-width: 600px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            header .nav-right {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-            header nav a {
-                margin-left: 0;
-            }
-            .nav-right button {
-                width: 100%;
-                text-align: center;
-                margin-left: 0;
-            }
-            .welcome-msg {
-                font-size: 1rem;
-                margin: 1rem;
-            }
-            table {
-                font-size: 0.85rem;
-            }
-            th, td {
-                padding: 0.5rem;
-            }
-            .action-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-            .rules-management input, .rules-management select, .communication input, .communication textarea {
-                max-width: 100%;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TPO Dashboard - PlacementHub</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js"></script>
 </head>
 <body>
-    <div class="loading" id="loading">
-        <div class="spinner"></div>
+  <header>
+    <h1>PlacementHub</h1>
+    <nav>
+      <a href="tpo_dashboard.html">Dashboard</a>
+      <a href="manage-jobs.html">Manage Jobs</a>
+      <a href="manage_students.html">Manage Students</a>
+      <a href="reports.html">Reports & Analytics</a>
+      <a href="notifications.html">Notifications</a>
+      <a href="index.html">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Welcome, TPO Name. Manage placements, students, and recruiters.</h2>
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <h3>Total Students Registered</h3>
+        <p>1234</p>
+      </div>
+      <div class="stat-card">
+        <h3>Jobs Posted</h3>
+        <p>456</p>
+      </div>
+      <div class="stat-card">
+        <h3>Applications Submitted</h3>
+        <p>7890</p>
+      </div>
+      <div class="stat-card">
+        <h3>Students Placed</h3>
+        <p>1024</p>
+      </div>
+      <div class="stat-card">
+        <h3>Placement Percentage</h3>
+        <p>83%</p>
+      </div>
     </div>
-    <header role="banner">
-        <div class="logo" aria-label="PlacementHub Logo">PlacementHub</div>
-        <nav class="nav-right" role="navigation" aria-label="Primary Navigation">
-            <a href="#dashboard" aria-current="page">Dashboard</a>
-            <a href="#manage-jobs">Manage Jobs</a>
-            <a href="#manage-students">Manage Students</a>
-            <a href="#company-oversight">Company Oversight</a>
-            <a href="#rules-management">Rules Management</a>
-            <a href="#notifications">Notifications</a>
-            <a href="#reports">Reports & Analytics</a>
-            <button onclick="handleLogout()" aria-label="Logout">Logout</button>
-        </nav>
-    </header>
-    <section class="welcome-msg" aria-label="Welcome message">
-        Welcome, [TPO Name]. Manage placements, students, and recruiters.
+
+    <section>
+      <h3>Department-wise Placements</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
     </section>
-    <section class="cards-container" aria-label="Statistics overview">
-        <div class="stats-card" role="region" aria-labelledby="students-registered">
-            <h3 id="students-registered">Total Students Registered</h3>
-            <p>1234</p>
-        </div>
-        <div class="stats-card" role="region" aria-labelledby="jobs-posted">
-            <h3 id="jobs-posted">Jobs Posted</h3>
-            <p>456</p>
-        </div>
-        <div class="stats-card" role="region" aria-labelledby="applications-submitted">
-            <h3 id="applications-submitted">Applications Submitted</h3>
-            <p>7890</p>
-        </div>
-        <div class="stats-card" role="region" aria-labelledby="students-placed">
-            <h3 id="students-placed">Students Placed</h3>
-            <p>1024</p>
-        </div>
-        <div class="stats-card" role="region" aria-labelledby="placement-percentage">
-            <h3 id="placement-percentage">Placement Percentage</h3>
-            <p>83%</p>
-        </div>
+    <section>
+      <h3>Tier-wise Placement Distribution</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
     </section>
-    <section class="charts-container" aria-label="Placement analytics charts">
-        <div class="chart" aria-label="Department-wise Placements chart">
-            <h2 class="section-title">Department-wise Placements</h2>
-            <canvas id="deptChart" height="200"></canvas>
+    <section>
+      <h3>Total Placements Over Time</h3>
+      <div class="chart-placeholder">[Chart Placeholder]</div>
+    </section>
+
+    <section>
+      <h3>Placement Rules Management</h3>
+      <form>
+        <label>Minimum CGPA</label>
+        <input type="number" name="min-cgpa" step="0.1">
+        <label>Maximum Allowed Backlogs</label>
+        <input type="number" name="max-backlogs">
+        <label>Eligible Departments</label>
+        <div>
+          <input type="checkbox" name="eligible-depts" value="CSE"> CSE
+          <input type="checkbox" name="eligible-depts" value="ECE"> ECE
+          <input type="checkbox" name="eligible-depts" value="ME"> ME
+          <input type="checkbox" name="eligible-depts" value="CE"> CE
         </div>
-        <div class="chart" aria-label="Tier-wise Placement Distribution chart">
-            <h2 class="section-title">Tier-wise Placement Distribution</h2>
-            <canvas id="tierChart" height="200"></canvas>
+        <label>Maximum Offers Allowed</label>
+        <input type="number" name="max-offers">
+        <label>Allow Tier Downgrade</label>
+        <div>
+          <input type="radio" name="allow-tier-downgrade" value="Yes"> Yes
+          <input type="radio" name="allow-tier-downgrade" value="No"> No
         </div>
-        <div class="chart" aria-label="Total Placements Over Time chart">
-            <h2 class="section-title">Total Placements Over Time</h2>
-            <canvas id="timelineChart" height="200"></canvas>
-        </div>
+        <button type="button" class="btn save-rules">Save Rules</button>
+      </form>
     </section>
-    <section id="rules-management" class="rules-management" aria-label="Placement Rules Management">
-        <h2 class="section-title">Placement Rules Management</h2>
-        <form onsubmit="saveRules(event)" aria-label="Placement rules configuration form">
-            <label for="min խայտ">Minimum CGPA</label>
-            <input type="number" id="cgpa" name="cgpa" step="0.1" min="0" max="10" placeholder="e.g., 6.5" required />
-            <label for="max-backlogs">Maximum Allowed Backlogs</label>
-            <input type="number" id="max-backlogs" name="max-backlogs" min="0" max="10" placeholder="e.g., 2" required />
-            <label for="eligible-depts">Eligible Departments</label>
-            <select id="eligible-depts" name="eligible-depts" multiple required>
-                <option value="cse">CSE</option>
-                <option value="ece">ECE</option>
-                <option value="me">ME</option>
-                <option value="ce">CE</option>
-            </select>
-            <label for="max-offers">Maximum Offers Allowed</label>
-            <input type="number" id="max-offers" name="max-offers" min="1" max="5" placeholder="e.g., 2" required />
-            <label for="tier-downgrade">Allow Tier Downgrade</label>
-            <select id="tier-downgrade" name="tier-downgrade">
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-            </select>
-            <button type="submit" aria-label="Save placement rules">Save Rules</button>
-        </form>
+
+    <section>
+      <h3>Job Management</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Company Name</th>
+            <th>Role</th>
+            <th>Package</th>
+            <th>Eligible Depts</th>
+            <th>Schedule</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ABC Corp</td>
+            <td>Software Engineer</td>
+            <td>12 LPA</td>
+            <td>CSE, ECE</td>
+            <td>2025-09-15</td>
+            <td>Pending Approval</td>
+            <td>
+              <button>Approve</button>
+              <button>Reject</button>
+              <button>View Applicants</button>
+              <button>Edit Schedule</button>
+            </td>
+          </tr>
+          <tr>
+            <td>XYZ Ltd</td>
+            <td>Data Analyst</td>
+            <td>8 LPA</td>
+            <td>CSE, IT</td>
+            <td>2025-09-20</td>
+            <td>Active</td>
+            <td>
+              <button>View Applicants</button>
+              <button>Edit Schedule</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
-    <section id="manage-jobs" aria-label="Job Management">
-        <h2 class="section-title">Job Management</h2>
-        <table role="table" aria-describedby="jobManagementDesc">
-            <thead>
-                <tr>
-                    <th scope="col">Company Name</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Package</th>
-                    <th scope="col">Eligible Depts</th>
-                    <th scope="col">Schedule</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>ABC Corp</td>
-                    <td>Software Engineer</td>
-                    <td>12 LPA</td>
-                    <td>CSE, ECE</td>
-                    <td>2025-09-15</td>
-                    <td>Pending Approval</td>
-                    <td>
-                        <button class="action-btn approve" onclick="approveJob('ABC Corp')" aria-label="Approve ABC Corp job posting">Approve</button>
-                        <button class="action-btn reject" onclick="rejectJob('ABC Corp')" aria-label="Reject ABC Corp job posting">Reject</button>
-                        <button class="action-btn view" onclick="viewApplicants('ABC Corp')" aria-label="View applicants for ABC Corp">View Applicants</button>
-                        <button class="action-btn edit-schedule" onclick="editSchedule('ABC Corp')" aria-label="Edit schedule for ABC Corp">Edit Schedule</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>XYZ Ltd</td>
-                    <td>Data Analyst</td>
-                    <td>8 LPA</td>
-                    <td>CSE, IT</td>
-                    <td>2025-09-20</td>
-                    <td>Active</td>
-                    <td>
-                        <button class="action-btn view" onclick="viewApplicants('XYZ Ltd')" aria-label="View applicants for XYZ Ltd">View Applicants</button>
-                        <button class="action-btn edit-schedule" onclick="editSchedule('XYZ Ltd')" aria-label="Edit schedule for XYZ Ltd">Edit Schedule</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <section>
+      <h3>Student Oversight</h3>
+      <div class="filters">
+        <select name="status">
+          <option>All</option>
+          <option>Placed</option>
+          <option>Shortlisted</option>
+          <option>Applied</option>
+        </select>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Branch</th>
+            <th>CGPA</th>
+            <th>Applications Count</th>
+            <th>Current Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>CSE</td>
+            <td>8.5</td>
+            <td>5</td>
+            <td>Placed</td>
+            <td>
+              <button>View Profile</button>
+              <button>Remove</button>
+              <button>Send Notice</button>
+            </td>
+          </tr>
+          <tr>
+            <td>Jane Smith</td>
+            <td>ECE</td>
+            <td>8.1</td>
+            <td>3</td>
+            <td>Shortlisted</td>
+            <td>
+              <button>View Profile</button>
+              <button>Remove</button>
+              <button>Send Notice</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </section>
-    <section id="manage-students" aria-label="Student Oversight">
-        <h2 class="section-title">Student Oversight</h2>
-        <div style="margin-bottom: 1rem;">
-            <label for="status-filter">Filter by Status: </label>
-            <select id="status-filter" onchange="filterStudents(this.value)" aria-label="Filter students by status">
-                <option value="all">All</option>
-                <option value="placed">Placed</option>
-                <option value="shortlisted">Shortlisted</option>
-                <option value="applied">Applied</option>
-            </select>
-        </div>
-        <table role="table" aria-describedby="studentOversightDesc">
-            <thead>
-                <tr>
-                    <th scope="col">Student Name</th>
-                    <th scope="col">Branch</th>
-                    <th scope="col">CGPA</th>
-                    <th scope="col">Applications Count</th>
-                    <th scope="col">Current Status</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody id="student-table-body">
-                <tr>
-                    <td>John Doe</td>
-                    <td>CSE</td>
-                    <td>8.5</td>
-                    <td>5</td>
-                    <td>Placed</td>
-                    <td>
-                        <button class="action-btn view" onclick="viewProfile('John Doe')" aria-label="View John Doe profile">View Profile</button>
-                        <button class="action-btn remove" onclick="removeStudent('John Doe')" aria-label="Remove John Doe">Remove</button>
-                        <button class="action-btn send-notice" onclick="sendNotice('John Doe')" aria-label="Send notice to John Doe">Send Notice</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>ECE</td>
-                    <td>8.1</td>
-                    <td>3</td>
-                    <td>Shortlisted</td>
-                    <td>
-                        <button class="action-btn view" onclick="viewProfile('Jane Smith')" aria-label="View Jane Smith profile">View Profile</button>
-                        <button class="action-btn remove" onclick="removeStudent('Jane Smith')" aria-label="Remove Jane Smith">Remove</button>
-                        <button class="action-btn send-notice" onclick="sendNotice('Jane Smith')" aria-label="Send notice to Jane Smith">Send Notice</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <section>
+      <h3>Company Oversight</h3>
+      <div class="filters">
+        <select name="company">
+          <option>All Companies</option>
+          <option>ABC Corp</option>
+          <option>XYZ Ltd</option>
+        </select>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Company</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>ABC Corp</td>
+            <td>Software Engineer</td>
+            <td>Applied</td>
+            <td><button>View Application</button></td>
+          </tr>
+          <tr>
+            <td>Jane Smith</td>
+            <td>XYZ Ltd</td>
+            <td>Data Analyst</td>
+            <td>Shortlisted</td>
+            <td><button>View Application</button></td>
+          </tr>
+        </tbody>
+      </table>
     </section>
-    <section id="company-oversight" class="company-oversight" aria-label="Company Oversight">
-        <h2 class="section-title">Company Oversight</h2>
-        <div style="margin-bottom: 1rem;">
-            <label for="company-filter">Select Company: </label>
-            <select id="company-filter" onchange="filterCompanyApplications(this.value)" aria-label="Filter applications by company">
-                <option value="all">All Companies</option>
-                <option value="abc-corp">ABC Corp</option>
-                <option value="xyz-ltd">XYZ Ltd</option>
-            </select>
-        </div>
-        <table role="table" aria-describedby="companyOversightDesc">
-            <thead>
-                <tr>
-                    <th scope="col">Student Name</th>
-                    <th scope="col">Company</th>
-                    <th scope="col">Role</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody id="company-table-body">
-                <tr>
-                    <td>John Doe</td>
-                    <td>ABC Corp</td>
-                    <td>Software Engineer</td>
-                    <td>Applied</td>
-                    <td>
-                        <button class="action-btn view" onclick="viewApplication('John Doe', 'ABC Corp')" aria-label="View John Doe's application for ABC Corp">View Application</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>XYZ Ltd</td>
-                    <td>Data Analyst</td>
-                    <td>Shortlisted</td>
-                    <td>
-                        <button class="action-btn view" onclick="viewApplication('Jane Smith', 'XYZ Ltd')" aria-label="View Jane Smith's application for XYZ Ltd">View Application</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+
+    <section>
+      <h3>Notifications</h3>
+      <div class="notification">
+        <p>📢 New job posting requests</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>⏰ Upcoming interviews/tests</p>
+        <button>Mark as Read</button>
+      </div>
+      <div class="notification">
+        <p>⚠ Rule violation: John Doe (Multiple offers)</p>
+        <button>Mark as Read</button>
+      </div>
     </section>
-    <section id="notifications" class="notifications" aria-label="Notifications">
-        <h2 class="section-title">Notifications</h2>
-        <ul role="list" aria-label="Recent notifications" id="notifications-list">
-            <li role="listitem">📢 New job posting requests</li>
-            <li role="listitem">⏰ Upcoming interviews/tests</li>
-            <li role="listitem">⚠ Rule violation: John Doe (Multiple offers)</li>
-        </ul>
+
+    <section>
+      <h3>Send Announcement/Notice</h3>
+      <form>
+        <select name="recipient">
+          <option>All Students</option>
+          <option>Specific Student</option>
+          <option>Specific Company</option>
+        </select>
+        <input type="text" name="specific-recipient" placeholder="Specific Recipient Name">
+        <textarea name="message" placeholder="Message"></textarea>
+        <button type="submit" class="btn">Send</button>
+      </form>
     </section>
-    <section class="communication" aria-label="Communication">
-        <h2 class="section-title">Send Announcement/Notice</h2>
-        <form onsubmit="sendAnnouncement(event)" aria-label="Send announcement or notice form">
-            <label for="recipient">Recipient</label>
-            <select id="recipient" name="recipient" required>
-                <option value="all">All Students</option>
-                <option value="specific">Specific Student</option>
-                <option value="company">Specific Company</option>
-            </select>
-            <label for="specific-recipient" class="specific-recipient hidden">Specific Recipient Name</label>
-            <input type="text" id="specific-recipient" name="specific-recipient" class="specific-recipient hidden" placeholder="Enter name or company" />
-            <label for="message">Message</label>
-            <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
-            <button type="submit" aria-label="Send announcement or notice">Send</button>
-        </form>
+
+    <section>
+      <h3>Reports & Analytics Quick Access</h3>
+      <button>Generate Department Report</button>
+      <button>Generate Company Report</button>
+      <button>Generate Student Placement Report</button>
+      <button>Export as CSV</button>
+      <button>Export as PDF</button>
     </section>
-    <section class="reports" aria-label="Reports and Analytics">
-        <h2 class="section-title">Reports & Analytics Quick Access</h2>
-        <button onclick="generateReport('Department')" aria-label="Generate Department Report">Generate Department Report</button>
-        <button onclick="generateReport('Company')" aria-label="Generate Company Report">Generate Company Report</button>
-        <button onclick="generateReport('Student')" aria-label="Generate Student Placement Report">Generate Student Placement Report</button>
-        <button onclick="exportData('csv')" aria-label="Export Placement Data as CSV">Export as CSV</button>
-        <button onclick="exportData('pdf')" aria-label="Export Placement Data as PDF">Export as PDF</button>
-    </section>
-    <footer role="contentinfo">
-        <a href="about.html" aria-label="About PlacementHub">About</a> •
-        <a href="help.html" aria-label="Help">Help</a> •
-        <a href="contact.html" aria-label="Contact">Contact</a> •
-        <a href="privacy.html" aria-label="Privacy Policy">Privacy Policy</a><br />
-        Credits: Team Codespark
-    </footer>
-    <script>
-        function showLoading() {
-            document.getElementById('loading').style.display = 'flex';
-        }
+  </div>
 
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-
-        function handleLogout() {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert('Logging out...');
-                location.href = 'index.html';
-            }, 1000);
-        }
-
-        function approveJob(company) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Approved job posting for ${company}`);
-                // Update job status in a real app
-            }, 1000);
-        }
-
-        function rejectJob(company) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Rejected job posting for ${company}`);
-            }, 1000);
-        }
-
-        function viewApplicants(company) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Viewing applicants for ${company}`);
-                location.href = `applicants.html?company=${encodeURIComponent(company)}`;
-            }, 1000);
-        }
-
-        function editSchedule(company) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Editing schedule for ${company}`);
-                // Redirect to schedule editor in a real app
-            }, 1000);
-        }
-
-        function viewProfile(student) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Viewing profile for ${student}`);
-                location.href = `profile.html?student=${encodeURIComponent(student)}`;
-            }, 1000);
-        }
-
-        function removeStudent(student) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Removed ${student} from the system`);
-            }, 1000);
-        }
-
-        function sendNotice(student) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Notice sent to ${student}`);
-                const newNotification = document.createElement('li');
-                newNotification.role = 'listitem';
-                newNotification.textContent = `📩 Notice sent to ${student}`;
-                document.getElementById('notifications-list').prepend(newNotification);
-            }, 1000);
-        }
-
-        function viewApplication(student, company) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Viewing ${student}'s application for ${company}`);
-                location.href = `application.html?student=${encodeURIComponent(student)}&company=${encodeURIComponent(company)}`;
-            }, 1000);
-        }
-
-        function saveRules(event) {
-            event.preventDefault();
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert('Placement rules saved successfully');
-            }, 1000);
-        }
-
-        function sendAnnouncement(event) {
-            event.preventDefault();
-            const recipient = document.getElementById('recipient').value;
-            const specificRecipient = document.getElementById('specific-recipient').value;
-            const message = document.getElementById('message').value;
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Announcement sent to ${recipient === 'specific' ? specificRecipient : recipient}`);
-                const newNotification = document.createElement('li');
-                newNotification.role = 'listitem';
-                newNotification.textContent = `📢 Announcement sent to ${recipient === 'specific' ? specificRecipient : recipient}: ${message.substring(0, 20)}...`;
-                document.getElementById('notifications-list').prepend(newNotification);
-            }, 1000);
-        }
-
-        function generateReport(type) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Generating ${type} report...`);
-            }, 1000);
-        }
-
-        function exportData(format) {
-            showLoading();
-            setTimeout(() => {
-                hideLoading();
-                alert(`Exporting placement data as ${format.toUpperCase()}...`);
-            }, 1000);
-        }
-
-        function filterStudents(status) {
-            const tableBody = document.getElementById('student-table-body');
-            const rows = tableBody.getElementsByTagName('tr');
-            for (let row of rows) {
-                const rowStatus = row.cells[4].textContent.toLowerCase();
-                row.style.display = (status === 'all' || rowStatus === status.toLowerCase()) ? '' : 'none';
-            }
-        }
-
-        function filterCompanyApplications(company) {
-            const tableBody = document.getElementById('company-table-body');
-            const rows = tableBody.getElementsByTagName('tr');
-            for (let row of rows) {
-                const rowCompany = row.cells[1].textContent.toLowerCase().replace(/\s/g, '-');
-                row.style.display = (company === 'all' || rowCompany === company) ? '' : 'none';
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Chart.js initialization
-            new Chart(document.getElementById('deptChart'), {
-                type: 'bar',
-                data: {
-                    labels: ['CSE', 'ECE', 'ME', 'CE'],
-                    datasets: [{
-                        label: 'Placements',
-                        data: [300, 250, 150, 100],
-                        backgroundColor: '#2a9d8f',
-                        borderColor: '#1f6570',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            new Chart(document.getElementById('tierChart'), {
-                type: 'pie',
-                data: {
-                    labels: ['Tier 1', 'Tier 2', 'Tier 3'],
-                    datasets: [{
-                        data: [40, 35, 25],
-                        backgroundColor: ['#2a9d8f', '#e9c46a', '#f4a261'],
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-
-            new Chart(document.getElementById('timelineChart'), {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                    datasets: [{
-                        label: 'Placements',
-                        data: [50, 100, 150, 200, 250],
-                        borderColor: '#2a9d8f',
-                        backgroundColor: 'rgba(42, 157, 143, 0.2)',
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
-                }
-            });
-
-            // Dynamic notification update
-            setTimeout(() => {
-                const newNotification = document.createElement('li');
-                newNotification.role = 'listitem';
-                newNotification.textContent = '📢 New job posting: TechCorp';
-                document.getElementById('notifications-list').prepend(newNotification);
-            }, 5000);
-
-            // Show/hide specific recipient field based on recipient selection
-            document.getElementById('recipient').addEventListener('change', (e) => {
-                const specificFields = document.getElementsByClassName('specific-recipient');
-                for (let field of specificFields) {
-                    field.classList.toggle('hidden', e.target.value !== 'specific');
-                }
-            });
-        });
-    </script>
+  <footer>
+    <a href="about.html">About</a> •
+    <a href="help.html">Help</a> •
+    <a href="contact.html">Contact</a> •
+    <a href="privacy.html">Privacy Policy</a>
+    <p>Credits: Team Codespark</p>
+  </footer>
 </body>
 </html>
