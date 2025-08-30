@@ -1,150 +1,409 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-
-                // Convert sheet to JSON to filter blank rows
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                // Filter out blank rows (rows where all cells are empty, null, or undefined)
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-
-                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                // Fallback
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-
-                // Convert filtered JSON back to CSV
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlacementHub - Applicants</title>
+    <title>Applications - PlacementHub</title>
+    <link rel="stylesheet" href="../global.css">
     <link rel="stylesheet" href="recruiter.css">
-    <script src="recruiter.js" defer></script>
 </head>
 <body>
     <header>
         <h1>PlacementHub</h1>
         <nav>
-            <a href="recruiter_dashboard.html">Dashboard</a>
-            <a href="post_job.html">Post Job</a>
-            <a href="applicants.html" class="active">Applicants</a>
-            <a href="shortlist.html">Shortlist</a>
-            <a href="offers.html">Offers</a>
-            <a href="index.html">Logout</a>
+            <ul>
+                <li><a href="recruiter_dashboard.html">Dashboard</a></li>
+                <li><a href="post_job.html">Post Job</a></li>
+                <li><a href="manage_jobs.html">Manage Jobs</a></li>
+                <li><a href="applicants.html">Applications</a></li>
+                <li><a href="interviews.html">Interviews</a></li>
+                
+                <li><a href="../index.html">Logout</a></li>
+            </ul>
         </nav>
     </header>
 
     <main>
-        <h2>PlacementHub – Applicants</h2>
-        <p>Review and manage applicants for your job postings.</p>
-        <section>
-            <label for="job-posting">Select Job Posting:</label>
-            <select id="job-posting">
-                <option value="">Select a job</option>
-                <option value="software-engineer">Software Engineer – Amazon</option>
-                <option value="intern-infosys">Intern – Infosys</option>
-                <option value="data-analyst">Data Analyst – Google</option>
-            </select>
-            <p>Please select a job posting.</p>
-        </section>
-
-        <section>
-            <form>
-                <label for="branch">Branch:</label>
-                <select id="branch">
-                    <option value="all">All Branches</option>
-                    <option value="cse">CSE</option>
-                    <option value="ece">ECE</option>
-                    <option value="me">ME</option>
-                    <option value="ce">CE</option>
-                    <option value="ee">EE</option>
-                </select>
-                <label for="cgpa-min">CGPA (min):</label>
-                <input type="number" id="cgpa-min" min="0" max="10" placeholder="CGPA must be between 0 and 10">
-                <label for="cgpa-max">CGPA (max):</label>
-                <input type="number" id="cgpa-max" min="0" max="10" placeholder="CGPA must be between 0 and 10">
-                <label for="sort-by">Sort By:</label>
-                <select id="sort-by">
-                    <option value="cgpa">Highest CGPA</option>
-                    <option value="skills">Most Skills Matched</option>
-                </select>
-                <button type="submit">Filter</button>
-            </form>
+        <section class="hero">
+            <h2>Manage Applications</h2>
+            <p>Review, shortlist, and manage candidate applications efficiently</p>
         </section>
 
         <section class="stats">
             <div class="stat-card">
-                <p>0 Total Applicants</p>
+                <span>📝</span>
+                <h3>156</h3>
+                <p>Total Applications</p>
             </div>
             <div class="stat-card">
-                <p>0 Shortlisted Candidates</p>
+                <span>🆕</span>
+                <h3>23</h3>
+                <p>New Applications</p>
             </div>
             <div class="stat-card">
-                <p>0 Rejected Candidates</p>
+                <span>🎯</span>
+                <h3>31</h3>
+                <p>Shortlisted</p>
             </div>
             <div class="stat-card">
-                <p>0 Pending Review</p>
+                <span>📅</span>
+                <h3>12</h3>
+                <p>Interview Scheduled</p>
             </div>
         </section>
 
-        <section>
-            <button>Shortlist Selected</button>
-            <button>Reject Selected</button>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Student Name 👩‍🎓</th>
-                        <th>Branch / Year 🎓</th>
-                        <th>CGPA 📊</th>
-                        <th>Skills</th>
-                        <th>Resume 📄</th>
-                        <th>Application Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Dynamic content to be populated via JS -->
-                </tbody>
-            </table>
+        <section class="filters">
+            <select data-filter="job">
+                <option>All Jobs</option>
+                <option>Software Engineer</option>
+                <option>Data Scientist</option>
+                <option>Frontend Developer</option>
+                <option>Product Manager</option>
+                <option>Summer Internship</option>
+            </select>
+            <select data-filter="status">
+                <option>All Statuses</option>
+                <option>New</option>
+                <option>Reviewing</option>
+                <option>Shortlisted</option>
+                <option>Interview</option>
+                <option>Offer</option>
+                <option>Rejected</option>
+            </select>
+            <select data-filter="source">
+                <option>All Sources</option>
+                <option>PlacementHub</option>
+                <option>College Portal</option>
+                <option>Email Application</option>
+                <option>Referral</option>
+            </select>
+            <select data-filter="sort">
+                <option>Recent Applications</option>
+                <option>Score (High to Low)</option>
+                <option>Score (Low to High)</option>
+                <option>Name A-Z</option>
+                <option>Application Date</option>
+            </select>
         </section>
 
-        <section class="modal" id="applicant-profile">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h3>Applicant Profile</h3>
-                <!-- Dynamic content to be populated via JS -->
+        <section class="data-import">
+            <h3>📊 Bulk Import Applications</h3>
+            <div class="upload-area">
+                <div class="upload-icon">📁</div>
+                <h4>Upload Excel/CSV File</h4>
+                <p>Drag and drop or click to upload candidate data</p>
+                <p style="font-size: 0.875rem; color: var(--gray-500);">Supported formats: .xlsx, .csv (Max 10MB)</p>
+            </div>
+            <div class="data-preview" style="display: none;">
+                <!-- Data preview will be shown here -->
+            </div>
+        </section>
+
+        <section class="candidate-grid">
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">AJ</div>
+                    <div class="candidate-info">
+                        <h4>Alice Johnson</h4>
+                        <p>alice.johnson@email.com</p>
+                        <span class="status-badge status-new">New</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Software Engineer</strong></small>
+                    <small>Applied on: Dec 15, 2024</small>
+                    <small>Score: <strong>8.5/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">JavaScript</span>
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">Node.js</span>
+                    <span class="skill-tag">MongoDB</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">2 years</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">8.5</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn primary" onclick="shortlistCandidate('c1')">Shortlist</button>
+                    <button class="btn secondary" onclick="rejectCandidate('c1')">Reject</button>
+                </div>
+            </div>
+
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">BS</div>
+                    <div class="candidate-info">
+                        <h4>Bob Smith</h4>
+                        <p>bob.smith@email.com</p>
+                        <span class="status-badge status-reviewing">Reviewing</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Data Scientist</strong></small>
+                    <small>Applied on: Dec 14, 2024</small>
+                    <small>Score: <strong>7.8/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Machine Learning</span>
+                    <span class="skill-tag">SQL</span>
+                    <span class="skill-tag">TensorFlow</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">1 year</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">8.2</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn primary" onclick="shortlistCandidate('c2')">Shortlist</button>
+                    <button class="btn secondary" onclick="rejectCandidate('c2')">Reject</button>
+                </div>
+            </div>
+
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">CD</div>
+                    <div class="candidate-info">
+                        <h4>Carol Davis</h4>
+                        <p>carol.davis@email.com</p>
+                        <span class="status-badge status-shortlisted">Shortlisted</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Frontend Developer</strong></small>
+                    <small>Applied on: Dec 13, 2024</small>
+                    <small>Score: <strong>9.1/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">React</span>
+                    <span class="skill-tag">TypeScript</span>
+                    <span class="skill-tag">CSS</span>
+                    <span class="skill-tag">Vue.js</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">Fresh graduate</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">9.1</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn primary" data-modal="interview-scheduler">Schedule Interview</button>
+                    <button class="btn secondary" onclick="rejectCandidate('c3')">Reject</button>
+                </div>
+            </div>
+
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">DW</div>
+                    <div class="candidate-info">
+                        <h4>David Wilson</h4>
+                        <p>david.wilson@email.com</p>
+                        <span class="status-badge status-interview">Interview</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Product Manager</strong></small>
+                    <small>Applied on: Dec 12, 2024</small>
+                    <small>Score: <strong>8.7/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">Product Strategy</span>
+                    <span class="skill-tag">Analytics</span>
+                    <span class="skill-tag">Agile</span>
+                    <span class="skill-tag">User Research</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">3 years</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">8.0</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn secondary">View Interview</button>
+                    <button class="btn primary" data-modal="offer-generator">Generate Offer</button>
+                </div>
+            </div>
+
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">EB</div>
+                    <div class="candidate-info">
+                        <h4>Emily Brown</h4>
+                        <p>emily.brown@email.com</p>
+                        <span class="status-badge status-offer">Offer Sent</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Software Engineer</strong></small>
+                    <small>Applied on: Dec 10, 2024</small>
+                    <small>Score: <strong>9.3/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Spring Boot</span>
+                    <span class="skill-tag">Microservices</span>
+                    <span class="skill-tag">AWS</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">2.5 years</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">9.0</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn secondary">View Offer</button>
+                    <button class="btn primary">Follow Up</button>
+                </div>
+            </div>
+
+            <div class="candidate-card">
+                <div class="candidate-header">
+                    <div class="candidate-avatar">FG</div>
+                    <div class="candidate-info">
+                        <h4>Frank Garcia</h4>
+                        <p>frank.garcia@email.com</p>
+                        <span class="status-badge status-rejected">Rejected</span>
+                    </div>
+                </div>
+                <div class="application-status">
+                    <small>Applied for: <strong>Data Scientist</strong></small>
+                    <small>Applied on: Dec 8, 2024</small>
+                    <small>Score: <strong>6.2/10</strong></small>
+                </div>
+                <div class="candidate-skills">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">Pandas</span>
+                    <span class="skill-tag">Excel</span>
+                </div>
+                <div class="candidate-meta">
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">Experience</div>
+                        <div class="candidate-meta-value">6 months</div>
+                    </div>
+                    <div class="candidate-meta-item">
+                        <div class="candidate-meta-label">CGPA</div>
+                        <div class="candidate-meta-value">7.5</div>
+                    </div>
+                </div>
+                <div class="candidate-actions">
+                    <button class="btn secondary" data-modal="candidate-details">View Profile</button>
+                    <button class="btn secondary">View Feedback</button>
+                    <button class="btn secondary">Reconsider</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Application Analytics</h3>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <span class="analytics-icon">📊</span>
+                    <div class="analytics-value">19.8%</div>
+                    <div class="analytics-label">Shortlist Rate</div>
+                    <div class="analytics-trend trend-up">+3% this week</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">⏱️</span>
+                    <div class="analytics-value">2.3 days</div>
+                    <div class="analytics-label">Avg Review Time</div>
+                    <div class="analytics-trend trend-down">-0.5 days</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">🎯</span>
+                    <div class="analytics-value">8.1</div>
+                    <div class="analytics-label">Avg Candidate Score</div>
+                    <div class="analytics-trend trend-up">+0.4 points</div>
+                </div>
+                <div class="analytics-card">
+                    <span class="analytics-icon">✅</span>
+                    <div class="analytics-value">76%</div>
+                    <div class="analytics-label">Offer Acceptance Rate</div>
+                    <div class="analytics-trend trend-up">+8% this month</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-card">
+            <h3>Bulk Actions</h3>
+            <div style="display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap;">
+                <button class="btn secondary">Select All New Applications</button>
+                <button class="btn secondary">Bulk Shortlist</button>
+                <button class="btn secondary">Bulk Reject</button>
+                <button class="btn secondary">Send Bulk Email</button>
+                <button class="btn secondary">Export Candidates</button>
+                <button class="btn secondary">Schedule Bulk Interviews</button>
             </div>
         </section>
     </main>
 
+    <div class="modal" id="candidate-details">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Candidate Profile</h2>
+            <p>Loading candidate details...</p>
+        </div>
+    </div>
+
+    <div class="modal" id="interview-scheduler">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Schedule Interview</h2>
+            <p>Loading interview scheduler...</p>
+        </div>
+    </div>
+
+    <div class="modal" id="offer-generator">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Generate Offer</h2>
+            <p>Loading offer generator...</p>
+        </div>
+    </div>
+
     <footer>
-        <a href="#help">Help</a> | <a href="#contact">Contact</a> | <a href="#privacy">Privacy Policy</a>
-        <p>GitHub Hackathon Credits</p>
+        <a href="../help.html">Help</a> •
+        <a href="../contact.html">Contact</a> •
+        <a href="../privacy.html">Privacy Policy</a>
+        <p>Credits: Team Codespark</p>
     </footer>
+
+    <script src="../global.js"></script>
+    <script src="recruiter.js"></script>
+    <script>
+        function rejectCandidate(candidateId) {
+            if (confirm('Are you sure you want to reject this candidate?')) {
+                showNotification('Candidate rejected. Feedback email sent.', 'info');
+            }
+        }
+    </script>
 </body>
 </html>
