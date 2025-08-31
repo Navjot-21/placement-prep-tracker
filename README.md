@@ -109,7 +109,7 @@ PlacementHub/
 ### Local Setup
 1. **Clone or Download**:
    ```bash
-   git clone:-
+   git clone:-https://github.com/Navjot-21/placement-prep-tracker.git
    ```
    Or download the ZIP file and extract it.
 
