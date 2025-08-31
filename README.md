@@ -45,13 +45,15 @@ PlacementHub redefines campus placement management with modern web technologies,
 
 ## 🛠️ Technology Stack
 
-| **Component**       | **Technology**                     | **Purpose**                              |
-|---------------------|------------------------------------|------------------------------------------|
-| **Frontend**        | HTML5, CSS3, JavaScript (ES6+)     | Responsive, interactive UI               |
-| **Styling**         | Custom CSS with Tailwind-inspired utilities | Mobile-first, modular design             |
-| **Interactivity**   | Vanilla JavaScript                 | Dynamic features and instant feedback    |
-| **Security**        | HTTPS, secure local storage        | Enterprise-grade data privacy            |
-| **Future Backend**  | Node.js/Flask/Firebase (extensible)| Scalable server-side functionality       |
+| **Component**      | **Technology**                              | **Purpose**                               |
+| ------------------ | ------------------------------------------- | ----------------------------------------- |
+| **Frontend**       | HTML5, CSS3, JavaScript (ES6+)              | Responsive, interactive UI                |
+| **Styling**        | Custom CSS with Tailwind-inspired utilities | Mobile-first, modular design              |
+| **Backend**        | Flask (Python), SQLAlchemy ORM              | APIs, authentication, and database models |
+| **Database**       | SQLite / MySQL                              | Persistent data storage                   |
+| **Security**       | Flask-Login, HTTPS, Flask-Mail              | Authentication, secure sessions, emails   |
+| **Future Backend** | Node.js/Flask/Firebase (extensible)         | Scalable integrations (optional)          |
+
 
 > **Note**: The platform is currently frontend-focused but designed for easy integration with backend services like Node.js, Flask, or Firebase for authentication, data persistence, and APIs.
 
@@ -96,6 +98,17 @@ PlacementHub/
 │   ├── reports.html        # Analytics and reports
 │   ├── notifications.html  # Notification management
 ```
+Backend:
+PlacementHub/
+├── app.py          # Flask app factory, extensions, default admin setup
+├── main.py         # Entry point for running the Flask server
+├── auth.py         # Authentication routes (login, register, logout)
+├── routes.py       # Core routes for Students, Recruiters, and TPOs
+├── models.py       # SQLAlchemy models (User, StudentProfile, Jobs, Applications, etc.)
+├── utils.py        # Utilities (file uploads, email, reports, validation)
+├── config.py       # Flask configuration (Dev, Prod, Test)
+├── database.py     # MySQL connection helper
+├── requirements.txt # Python dependencies
 
 ---
 
@@ -109,8 +122,10 @@ PlacementHub/
 ### Local Setup
 1. **Clone or Download**:
    ```bash
-   git clone:-https://github.com/Navjot-21/placement-prep-tracker.git
-   ```
+ git clone https://github.com/Navjot-21/placement-prep-tracker.git
+cd placement-prep-tracker
+
+
    Or download the ZIP file and extract it.
 
 2. **Serve Locally**:
