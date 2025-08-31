@@ -121,18 +121,17 @@ PlacementHub/
 
 ### Local Setup
 1. **Clone or Download**:
-   ```bash
- git clone https://github.com/Navjot-21/placement-prep-tracker.git
-cd placement-prep-tracker
+    git clone:- https://github.com/Navjot-21/placement-prep-tracker.git
+   cd placement-prep-tracker
 
 
    Or download the ZIP file and extract it.
 
-2. **Serve Locally**:
+3. **Serve Locally**:
    - Use a local server (e.g., VS Code Live Server, Python’s `http.server`, or Node.js `http-server`).
   
 
-3. **Access the Platform**:
+4. **Access the Platform**:
    - Navigate to `index.html` and select your role (Student, Recruiter, or TPO).
 
 ---
