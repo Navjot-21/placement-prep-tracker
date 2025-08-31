@@ -50,6 +50,7 @@ PlacementHub reimagines placement management with modern web tools, secure data 
 
 ## 📁 Project Structure
 
+
 PlacementHub/
 ├── index.html
 ├── global.css
@@ -86,7 +87,7 @@ PlacementHub/
 │   ├── reports.html
 │   ├── notifications.html
 
-[attached_file:7]
+
 
 ---
 
