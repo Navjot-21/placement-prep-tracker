@@ -1,0 +1,17 @@
+import mysql.connector
+from mysql.connector import Error
+
+def get_db_connection():
+    db_config = {
+        'host': 'localhost',
+        'user': 'your_username',  # Replace with your MySQL username
+        'password': 'your_password',  # Replace with your MySQL password
+        'database': 'placementhub'
+    }
+    try:
+        connection = mysql.connector.connect(**db_config)
+        if connection.is_connected():
+            return connection
+    except Error as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None

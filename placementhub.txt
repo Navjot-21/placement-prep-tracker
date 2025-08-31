@@ -1,0 +1,328 @@
+CREATE DATABASE placementhub;
+USE placementhub;
+
+-- Students Table
+CREATE TABLE students (
+    roll_number VARCHAR(20) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    branch ENUM('Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil', 'Electrical') NOT NULL,
+    cgpa DECIMAL(4,2),
+    status ENUM('Placed', 'Active', 'Inactive', 'Not Participating') DEFAULT 'Active',
+    last_activity DATETIME,
+    package DECIMAL(10,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Companies Table
+CREATE TABLE companies (
+    company_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(255),
+    description TEXT,
+    status ENUM('Active', 'Pending Approval') DEFAULT 'Pending Approval',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Jobs Table
+CREATE TABLE jobs (
+    job_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    company_id INT,
+    department ENUM('Engineering', 'Product', 'Design', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations') NOT NULL,
+    type ENUM('Full Time', 'Part Time', 'Contract', 'Internship') NOT NULL,
+    package_min DECIMAL(10,2),
+    package_max DECIMAL(10,2),
+    stipend DECIMAL(10,2),
+    location VARCHAR(100),
+    experience_level ENUM('Entry Level', 'Junior', 'Mid Level', 'Senior', 'Lead/Manager'),
+    deadline DATE,
+    status ENUM('Active', 'Paused', 'Filled', 'Expired', 'Draft') DEFAULT 'Draft',
+    posted_date DATE,
+    views INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(company_id)
+);
+
+-- Skills Table
+CREATE TABLE skills (
+    skill_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+-- Student_Skills Junction Table
+CREATE TABLE student_skills (
+    roll_number VARCHAR(20),
+    skill_id INT,
+    proficiency ENUM('Beginner', 'Intermediate', 'Advanced', 'Expert'),
+    PRIMARY KEY (roll_number, skill_id),
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number),
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
+);
+
+-- Job_Skills Junction Table
+CREATE TABLE job_skills (
+    job_id INT,
+    skill_id INT,
+    PRIMARY KEY (job_id, skill_id),
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id),
+    FOREIGN KEY (skill_id) REFERENCES skills(skill_id)
+);
+
+-- Applications Table
+CREATE TABLE applications (
+    application_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    job_id INT,
+    applied_date DATE,
+    status ENUM('Applied', 'Under Review', 'Test Scheduled', 'Shortlisted', 'Interview', 'Offer', 'Rejected') DEFAULT 'Applied',
+    score DECIMAL(4,2),
+    source ENUM('PlacementHub', 'College Portal', 'Email Application', 'Referral'),
+    experience_years DECIMAL(4,1),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number),
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id)
+);
+
+-- Interviewers Table
+CREATE TABLE interviewers (
+    interviewer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(100),
+    company_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (company_id) REFERENCES companies(company_id)
+);
+
+-- Interviews Table
+CREATE TABLE interviews (
+    interview_id INT AUTO_INCREMENT PRIMARY KEY,
+    application_id INT,
+    interviewer_id INT,
+    interview_date DATETIME,
+    type ENUM('Technical', 'HR Round', 'Final Round', 'Culture Fit'),
+    status ENUM('Scheduled', 'In Progress', 'Completed', 'Cancelled', 'No Show') DEFAULT 'Scheduled',
+    score DECIMAL(4,2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (application_id) REFERENCES applications(application_id),
+    FOREIGN KEY (interviewer_id) REFERENCES interviewers(interviewer_id)
+);
+
+-- Notifications Table
+CREATE TABLE notifications (
+    notification_id INT AUTO_INCREMENT PRIMARY KEY,
+    subject VARCHAR(255) NOT NULL,
+    type ENUM('General Announcement', 'Job Alert', 'Application Deadline', 'Interview Schedule', 'Placement Update', 'Event Notification') NOT NULL,
+    priority ENUM('Normal', 'High', 'Urgent') DEFAULT 'Normal',
+    status ENUM('Sent', 'Scheduled', 'Draft', 'Failed') DEFAULT 'Draft',
+    read_rate DECIMAL(5,2),
+    send_date DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Notification_Recipients Junction Table
+CREATE TABLE notification_recipients (
+    notification_id INT,
+    roll_number VARCHAR(20) NULL,
+    company_id INT NULL,
+    recipient_group ENUM('All Students', 'Final Year Students', 'Placed Students', 'Active Job Seekers', 'Specific Branch', 'All Companies', 'Custom Recipients'),
+    PRIMARY KEY (notification_id, roll_number, company_id, recipient_group),
+    FOREIGN KEY (notification_id) REFERENCES notifications(notification_id),
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number),
+    FOREIGN KEY (company_id) REFERENCES companies(company_id)
+);
+
+-- Reports Table
+CREATE TABLE reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type ENUM('Placement Statistics', 'Student Performance', 'Company Engagement', 'Salary Analysis', 'Application Tracking', 'Monthly Summary'),
+    period VARCHAR(100),
+    format ENUM('PDF', 'Excel', 'CSV', 'PowerPoint'),
+    size_mb DECIMAL(5,2),
+    generated_date DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Practice Tests Table
+CREATE TABLE practice_tests (
+    test_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category ENUM('Aptitude - Quantitative', 'Aptitude - Verbal', 'Aptitude - Logical', 'Coding - Data Structures', 'Coding - Algorithms', 'Coding - Web Development', 'Company Specific', 'Domain Specific'),
+    difficulty ENUM('Easy', 'Medium', 'Hard'),
+    duration_minutes INT,
+    questions_count INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Student Tests Table
+CREATE TABLE student_tests (
+    student_test_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    test_id INT,
+    score DECIMAL(5,2),
+    time_taken_minutes INT,
+    test_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number),
+    FOREIGN KEY (test_id) REFERENCES practice_tests(test_id)
+);
+
+-- Resumes Table
+CREATE TABLE resumes (
+    resume_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    file_name VARCHAR(255),
+    last_updated DATETIME,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number)
+);
+
+-- Education Table
+CREATE TABLE education (
+    education_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    degree VARCHAR(100),
+    institution VARCHAR(255),
+    year VARCHAR(20),
+    cgpa_percentage VARCHAR(10),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number)
+);
+
+-- Projects Table
+CREATE TABLE projects (
+    project_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    title VARCHAR(255),
+    description TEXT,
+    type ENUM('Personal Project', 'Internship', 'Team Project'),
+    duration VARCHAR(50),
+    technologies VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number)
+);
+
+-- Achievements Table
+CREATE TABLE achievements (
+    achievement_id INT AUTO_INCREMENT PRIMARY KEY,
+    roll_number VARCHAR(20),
+    title VARCHAR(255),
+    issuer VARCHAR(255),
+    issue_date DATE,
+    certificate_file VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (roll_number) REFERENCES students(roll_number)
+);
+
+-- Activities Table
+CREATE TABLE activities (
+    activity_id INT AUTO_INCREMENT PRIMARY KEY,
+    activity_date DATE,
+    type ENUM('Company Registration', 'Job Application', 'Interview Completed', 'Student Placement', 'Pre-placement Talk', 'Committee Meeting', 'Company Visit'),
+    student_roll_number VARCHAR(20) NULL,
+    company_id INT NULL,
+    job_id INT NULL,
+    status VARCHAR(50),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_roll_number) REFERENCES students(roll_number),
+    FOREIGN KEY (company_id) REFERENCES companies(company_id),
+    FOREIGN KEY (job_id) REFERENCES jobs(job_id)
+);
+
+-- Sample Data
+INSERT INTO students (roll_number, name, email, branch, cgpa, status, last_activity, package)
+VALUES
+    ('2021CS123', 'Alice Johnson', 'alice.johnson@college.edu', 'Computer Science', 8.5, 'Placed', '2024-12-16 14:00:00', 1200000),
+    ('2021IT456', 'Bob Smith', 'bob.smith@college.edu', 'Information Technology', 8.2, 'Active', '2024-12-15 10:00:00', NULL),
+    ('2021ECE789', 'Carol Davis', 'carol.davis@college.edu', 'Electronics', 9.1, 'Active', '2024-12-16 11:00:00', NULL);
+
+INSERT INTO companies (name, location, description, status)
+VALUES
+    ('TechCorp Solutions', 'Bangalore, India', 'Innovative technology solutions', 'Active'),
+    ('DataFlow Analytics', 'Mumbai, India', 'Data science and analytics', 'Active'),
+    ('Innovation Labs', 'Remote', 'Product development', 'Pending Approval');
+
+INSERT INTO jobs (title, company_id, department, type, package_min, package_max, location, experience_level, deadline, status, posted_date, views)
+VALUES
+    ('Software Engineer', 1, 'Engineering', 'Full Time', 1200000, 1500000, 'Bangalore', 'Entry Level', '2024-12-25', 'Active', '2024-12-10', 234),
+    ('Data Scientist', 2, 'Engineering', 'Full Time', 1800000, 2200000, 'Mumbai', 'Junior', '2024-12-30', 'Active', '2024-12-08', 189),
+    ('Summer Intern', 3, 'Engineering', 'Internship', NULL, NULL, 'Remote', 'Entry Level', '2025-02-01', 'Active', '2024-11-25', 312);
+
+INSERT INTO skills (name)
+VALUES
+    ('JavaScript'), ('React'), ('Node.js'), ('Python'), ('SQL');
+
+INSERT INTO student_skills (roll_number, skill_id, proficiency)
+VALUES
+    ('2021CS123', 1, 'Advanced'),
+    ('2021CS123', 2, 'Intermediate'),
+    ('2021IT456', 4, 'Expert');
+
+INSERT INTO job_skills (job_id, skill_id)
+VALUES
+    (1, 1), (1, 2), (1, 3),
+    (2, 4), (2, 5);
+
+INSERT INTO applications (roll_number, job_id, applied_date, status, score, source, experience_years)
+VALUES
+    ('2021CS123', 1, '2024-12-15', 'Offer', 8.5, 'PlacementHub', 2.0),
+    ('2021IT456', 2, '2024-12-14', 'Interview', 7.8, 'College Portal', 1.0),
+    ('2021ECE789', 1, '2024-12-13', 'Shortlisted', 9.1, 'PlacementHub', 0.0);
+
+INSERT INTO interviewers (name, role, company_id)
+VALUES
+    ('John Doe', 'Engineering Manager', 1),
+    ('Jane Smith', 'Senior Developer', 2);
+
+INSERT INTO interviews (application_id, interviewer_id, interview_date, type, status, score)
+VALUES
+    (1, 1, '2024-12-17 09:00:00', 'Technical', 'Scheduled', NULL),
+    (2, 2, '2024-12-15 14:00:00', 'Technical', 'Completed', 8.5);
+
+INSERT INTO notifications (subject, type, priority, status, read_rate, send_date)
+VALUES
+    ('Software Engineer Position - TechCorp', 'Job Alert', 'Normal', 'Sent', 78.0, '2024-12-16 14:30:00'),
+    ('Application Deadline Reminder', 'Application Deadline', 'High', 'Sent', 92.0, '2024-12-16 10:00:00');
+
+INSERT INTO notification_recipients (notification_id, recipient_group)
+VALUES
+    (1, 'Specific Branch'),
+    (2, 'Active Job Seekers');
+
+INSERT INTO reports (name, type, period, format, size_mb, generated_date)
+VALUES
+    ('December Placement Summary', 'Monthly Summary', 'Dec 1-15, 2024', 'PDF', 2.3, '2024-12-16 15:15:00'),
+    ('CS Branch Placement Analysis', 'Student Performance', '2024 Academic Year', 'Excel', 1.8, '2024-12-15 11:30:00');
+
+INSERT INTO practice_tests (name, category, difficulty, duration_minutes, questions_count)
+VALUES
+    ('Quantitative Aptitude', 'Aptitude - Quantitative', 'Medium', 45, 30),
+    ('JavaScript Fundamentals', 'Coding - Web Development', 'Medium', 30, 15);
+
+INSERT INTO student_tests (roll_number, test_id, score, time_taken_minutes, test_date)
+VALUES
+    ('2021CS123', 1, 85.0, 42, '2024-12-15'),
+    ('2021CS123', 2, 78.0, 28, '2024-12-14');
+
+INSERT INTO resumes (roll_number, file_name, last_updated)
+VALUES
+    ('2021CS123', 'Resume_JohnDoe_2024.pdf', '2024-12-15 10:00:00');
+
+INSERT INTO education (roll_number, degree, institution, year, cgpa_percentage)
+VALUES
+    ('2021CS123', 'B.Tech Computer Science', 'University College of Engineering', '2021-2025', '8.7 CGPA');
+
+INSERT INTO projects (roll_number, title, description, type, duration, technologies)
+VALUES
+    ('2021CS123', 'E-Commerce Web App', 'Full-stack web application with payment integration', 'Personal Project', '3 months', 'React, Node.js, MongoDB');
+
+INSERT INTO achievements (roll_number, title, issuer, issue_date, certificate_file)
+VALUES
+    ('2021CS123', 'AWS Certified Developer', 'Amazon Web Services', '2024-11-01', 'aws_cert_john_doe.pdf');
+
+INSERT INTO activities (activity_date, type, student_roll_number, company_id, job_id, status, description)
+VALUES
+    ('2024-12-16', 'Company Registration', NULL, 3, NULL, 'Pending Approval', 'Innovation Labs registration'),
+    ('2024-12-15', 'Job Application', '2021CS123', 1, 1, 'Shortlisted', 'Alice Johnson applied to Software Engineer');
