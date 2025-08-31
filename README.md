@@ -159,10 +159,8 @@ PlacementHub/
 
 ## 📬 Contact Us
 
-- **Email**: [support@placementhub.com](mailto:support@placementhub.com)
-- **Phone**: +1 (555) 123-4567
-- **Address**: 123 Education Street, Tech City, TC 12345
-- **Business Hours**: Monday–Friday, 9 AM–6 PM (EST)
+- **Email**: navjotman2008@gmail.com
+-
 
 > **Need Help?** Visit [`help.html`](./help.html) for FAQs and support resources.
 
@@ -212,5 +210,6 @@ member1-mayank kumar(mayankkumarlinghe@gmail.com)
 member2-navjot kaur(navjotman2008@gmail.com
 
 > **PlacementHub: Making campus placements easy, smart, and rewarding for all.**
+>
 > Video link: https://youtu.be/Thc5vS2kmPg
 
