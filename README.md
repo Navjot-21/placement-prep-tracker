@@ -212,4 +212,5 @@ member1-mayank kumar(mayankkumarlinghe@gmail.com)
 member2-navjot kaur(navjotman2008@gmail.com
 
 > **PlacementHub: Making campus placements easy, smart, and rewarding for all.**
+> Video link: https://youtu.be/Thc5vS2kmPg
 
