@@ -207,5 +207,9 @@ PlacementHub is built with modularity in mind, making it ready for future enhanc
 - **Community**: Thank you to all contributors and early adopters!
 
 ---
+team:-codespark
+member1-mayank kumar(mayankkumarlinghe@gmail.com)
+member2-navjot kaur(navjotman2008@gmail.com
 
 > **PlacementHub: Making campus placements easy, smart, and rewarding for all.**
+
